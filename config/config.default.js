@@ -1,10 +1,25 @@
 /* eslint valid-jsdoc: "off" */
-
-'use strict';
-
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
+
+const dotenv = require('dotenv');
+const path = require('path');
+
+// 加载环境变量
+const envConfig = dotenv.config({
+  path: path.resolve(__dirname, '../.env'), // 配置文件路径
+  encoding: 'utf8', // 编码方式，默认utf8
+  debug: false, // 是否开启debug，默认false
+}).parsed;
+
+if (!envConfig) {
+  // 抛出错误 退出程序
+  throw new Error("Can't load .env file");
+}
+
+const { DB_NAME, DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, SERVER_PORT } = process.env;
+
 module.exports = appInfo => {
   /**
    * built-in config
@@ -32,11 +47,11 @@ module.exports = appInfo => {
 
   config.sequelize = {
     dialect: 'mysql', // 数据库类型
-    database: 'hope_face', // 数据库名称
-    host: '124.222.188.206', // 数据库ip地址
-    port: '3306', // 数据库端口
-    username: 'hope_face', // 数据库用户名
-    password: 'asdhope!', // 数据库密码
+    database: DB_NAME, // 数据库名称
+    host: DB_HOST, // 数据库ip地址
+    port: +(DB_PORT || 3306), // 数据库端口
+    username: DB_USER, // 数据库用户名
+    password: DB_PASSWORD, // 数据库密码
     timezone: '+08:00', // 更改为北京时区
     define: {
       // 表名是否和model的js文件名一致
@@ -55,7 +70,7 @@ module.exports = appInfo => {
 
   config.cluster = {
     listen: {
-      port: 8621,
+      port: +(SERVER_PORT || 8621),
       // 0.0.0.0 表示监听所有网卡 部署后可以被外网访问
       hostname: '0.0.0.0',
     },
