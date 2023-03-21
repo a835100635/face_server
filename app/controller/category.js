@@ -63,6 +63,22 @@ class CategoryController extends Controller {
     ctx.body = result;
   }
 
+  /**
+   * 查询
+   */
+  async category() {
+    const { ctx } = this;
+    const result = await ctx.service.category.category();
+    const categoryMap = {};
+    result.forEach(c => {
+      if (!categoryMap[`${c.typeId}`]) {
+        categoryMap[`${c.typeId}`] = [];
+      }
+      categoryMap[c.typeId].push(c);
+    });
+    ctx.body = categoryMap;
+  }
+
 }
 
 module.exports = CategoryController;

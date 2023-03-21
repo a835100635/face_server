@@ -23,4 +23,5 @@ module.exports = app => {
   router.post('/api/category', controller.category.add);
   router.delete('/api/category/:categoryId', controller.category.delete);
   router.put('/api/category', controller.category.updated);
+  router.get('/api/category', controller.category.category);
 };

@@ -58,6 +58,16 @@ class CategoryService extends Service {
     return result;
   }
 
+  /**
+   * 获取分类
+   */
+  async category() {
+    const result = await this.ctx.model.Category.findAll({
+      attributes: [ 'categoryId', 'typeId', 'categoryName' ],
+    });
+    return result;
+  }
+
 }
 
 module.exports = CategoryService;
