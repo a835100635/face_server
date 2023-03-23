@@ -46,7 +46,7 @@ class CategoryController extends Controller {
   /**
    * 更新
    */
-  async updated() {
+  async update() {
     const { ctx } = this;
     const { typeId, categoryName, categoryId } = ctx.request.body;
     if (!categoryName || !categoryId || !([ 'string', 'number' ].includes(typeof typeId))) {

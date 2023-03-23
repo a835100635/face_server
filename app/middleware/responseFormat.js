@@ -4,14 +4,25 @@
 
 module.exports = function ResponseFormatMiddleware() {
   return async (ctx, next) => {
-    // next 上方是request
-    await next();
-    // next 下方是 response
-
-    ctx.body = {
-      code: 200,
-      data: ctx.body,
-      message: 'success',
-    };
+    try {
+      // next 上方是request
+      await next();
+      // next 下方是 response
+      console.log('ctx.response', ctx.response, ctx.body);
+      const { status, message } = ctx.response;
+      const { data, message: bodyMessage, code } = ctx.body || {};
+      ctx.body = {
+        code: status === 200 ? 200 : (code || status),
+        data: data || null,
+        message: status === 200 ? 'success' : (bodyMessage || message || '服务器异常'),
+      };
+    } catch (error) {
+      console.log(error);
+      ctx.body = {
+        code: 500,
+        message: '服务器异常',
+        data: null,
+      };
+    }
   };
 };

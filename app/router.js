@@ -22,8 +22,10 @@ module.exports = app => {
 
   router.post('/api/category', controller.category.add);
   router.delete('/api/category/:categoryId', controller.category.delete);
-  router.put('/api/category', controller.category.updated);
+  router.put('/api/category', controller.category.update);
   router.get('/api/category', controller.category.category);
 
   router.post('/api/topic', controller.topic.add);
+  router.delete('/api/topic/:topicId', controller.topic.delete);
+  router.put('/api/topic', controller.topic.update);
 };
