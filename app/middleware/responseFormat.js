@@ -8,12 +8,12 @@ module.exports = function ResponseFormatMiddleware() {
       // next 上方是request
       await next();
       // next 下方是 response
-      console.log('ctx.response', ctx.response, ctx.body);
       const { status, message } = ctx.response;
       const { data, message: bodyMessage, code } = ctx.body || {};
+      const is = 'data' in ctx.body && 'message' in ctx.body;
       ctx.body = {
         code: status === 200 ? 200 : (code || status),
-        data: data || null,
+        data: data || (is ? data : ctx.body) || null,
         message: status === 200 ? 'success' : (bodyMessage || message || '服务器异常'),
       };
     } catch (error) {

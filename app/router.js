@@ -28,4 +28,5 @@ module.exports = app => {
   router.post('/api/topic', controller.topic.add);
   router.delete('/api/topic/:topicId', controller.topic.delete);
   router.put('/api/topic', controller.topic.update);
+  router.get('/api/topic/:topicId', controller.topic.topic);
 };

@@ -10,11 +10,8 @@ class TopicController extends Controller {
   async add() {
     const { ctx } = this;
     verifyTopicData(ctx.request.body, ctx);
-    const topicExist = await ctx.service.topic.checkTopic({ value: ctx.request.body.topic, filed: 'topic' });
-    if (topicExist) {
-      throw new BadRequestException('题目已存在');
-    }
-    let { categoryId, topic, level, type, answer, options, correct, desc } = ctx.request.topicData;
+    await ctx.service.topic.checkTopic({ value: ctx.request.body.topic, filed: 'topic' });
+    let { categoryId, topic, level, type, answer, options, correct, desc } = ctx.request.body;
     options = JSON.stringify(options);
     const result = await ctx.service.topic.add({
       categoryId, topic, level, type, answer, options, correct, desc,
@@ -23,8 +20,8 @@ class TopicController extends Controller {
       like: 0,
       dislike: 0,
     });
-    result.options = JSON.parse(result.options);
-    ctx.body = result;
+    result.dataValues.options = JSON.parse(result.dataValues.options);
+    ctx.body = result.dataValues;
   }
 
   /**
@@ -33,12 +30,12 @@ class TopicController extends Controller {
   async delete() {
     const { ctx } = this;
     const { topicId } = ctx.params;
-    const topicExist = await ctx.service.topic.checkTopic({ value: topicId, filed: 'id' });
-    if (!topicExist) {
-      throw new BadRequestException('题目不存在');
-    }
+    await ctx.service.topic.checkTopic({ value: topicId, filed: 'id' });
     const result = await ctx.service.topic.delete(topicId);
-    ctx.body = result;
+    if (!result.length) {
+      throw new BadRequestException('删除失败');
+    }
+    ctx.body = null;
   }
 
   /**
@@ -50,18 +47,32 @@ class TopicController extends Controller {
     if (!id) {
       throw new BadRequestException('题目id必传');
     }
-    const topicExist = await ctx.service.topic.checkTopic({ value: id });
-    if (!topicExist) {
-      throw new BadRequestException('题目不存在');
-    }
+    await ctx.service.topic.checkTopic({ value: id });
     verifyTopicData(ctx.request.body, ctx);
     options = JSON.stringify(options);
     const result = await ctx.service.topic.update({
       id, categoryId, topic, level, type, answer, options, correct, desc,
     });
-    result.options = JSON.parse(result.options);
-    ctx.body = result;
+    if (!result.length) {
+      throw new BadRequestException('更新失败');
+    }
+    const newTopic = await ctx.service.topic.checkTopic({ value: id });
+    ctx.body = newTopic;
   }
+
+  /**
+   * 获取题目列表
+   */
+  async topic() {
+    const { ctx } = this;
+    const { topicId } = ctx.params;
+    if (!topicId) {
+      throw new BadRequestException('缺少题目id');
+    }
+    const topic = await ctx.service.topic.checkTopic({ value: topicId });
+    ctx.body = topic;
+  }
+
 }
 
 /**

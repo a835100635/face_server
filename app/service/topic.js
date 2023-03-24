@@ -2,6 +2,7 @@
  * 分类服务
  */
 const { Service } = require('egg');
+const BadRequestException = require('../exception/badRequest');
 
 class TopicService extends Service {
   /**
@@ -53,6 +54,10 @@ class TopicService extends Service {
         [filed]: value,
       },
     });
+    if (!result) {
+      throw new BadRequestException('题目不存在');
+    }
+    result.dataValues.options = JSON.parse(result.dataValues.options);
     return result;
   }
 }
