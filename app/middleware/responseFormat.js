@@ -10,7 +10,7 @@ module.exports = function ResponseFormatMiddleware() {
       // next 下方是 response
       const { status, message } = ctx.response;
       const { data, message: bodyMessage, code } = ctx.body || {};
-      const is = 'data' in ctx.body && 'message' in ctx.body;
+      const is = data && message;
       ctx.body = {
         code: status === 200 ? 200 : (code || status),
         data: data || (is ? data : ctx.body) || null,

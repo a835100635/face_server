@@ -10,7 +10,10 @@ class TopicController extends Controller {
   async add() {
     const { ctx } = this;
     verifyTopicData(ctx.request.body, ctx);
-    await ctx.service.topic.checkTopic({ value: ctx.request.body.topic, filed: 'topic' });
+    const topicData = await ctx.service.topic.checkTopic({ value: ctx.request.body.topic, filed: 'topic' });
+    if (topicData) {
+      throw new BadRequestException('题目已存在');
+    }
     let { categoryId, topic, level, type, answer, options, correct, desc } = ctx.request.body;
     options = JSON.stringify(options);
     const result = await ctx.service.topic.add({
@@ -47,7 +50,10 @@ class TopicController extends Controller {
     if (!id) {
       throw new BadRequestException('题目id必传');
     }
-    await ctx.service.topic.checkTopic({ value: id });
+    const topicData = await ctx.service.topic.checkTopic({ value: id.topic });
+    if (topicData) {
+      throw new BadRequestException('题目已存在');
+    }
     verifyTopicData(ctx.request.body, ctx);
     options = JSON.stringify(options);
     const result = await ctx.service.topic.update({
@@ -73,12 +79,38 @@ class TopicController extends Controller {
     ctx.body = topic;
   }
 
+  /**
+   * 获取题目列表
+   */
+  async list() {
+    const { ctx } = this;
+    const { categoryId, pageNum = 1, pageSize = 10 } = ctx.query;
+    const field = [ 'categoryId', 'topic', 'level', 'type', 'answer', 'online', 'status',
+      'createUser', 'updatedTime', 'pageNum', 'pageSize', 'startTime', 'endTime', 'detail' ];
+    const keys = Object.keys(ctx.query);
+    keys.forEach(key => {
+      if (!field.includes(key)) {
+        throw new BadRequestException(`${key} 参数错误`);
+      }
+    });
+    if (categoryId) {
+      await ctx.service.category.checkCategory({ value: categoryId });
+    }
+    const isKey = [ 'categoryId', 'topic', 'level', 'type', 'answer', 'online', 'status', 'createUser', 'updatedTime', 'startTime', 'endTime', 'detail' ];
+    const condition = isKey.reduce((pre, item) => {
+      if (ctx.query[item]) pre[item] = ctx.query[item];
+      return pre;
+    }, {});
+    const result = await ctx.service.topic.list(condition, { pageNum, pageSize });
+    ctx.body = result;
+  }
+
 }
 
 /**
  * 验证题目数据
- * @param {*} topicData
- * @param {*} ctx
+ * @param {*} topicData 参数
+ * @param {*} ctx 上下文
  */
 function verifyTopicData(topicData, ctx) {
   const { categoryId, topic, level, type, answer, options, correct } = topicData;

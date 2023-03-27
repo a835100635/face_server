@@ -5,6 +5,7 @@
 
 const dotenv = require('dotenv');
 const path = require('path');
+// const { Op } = require('sequelize');
 
 // 加载环境变量
 const envConfig = dotenv.config({
@@ -59,12 +60,12 @@ module.exports = appInfo => {
       underscored: true,
     },
     // operatorsAliases: {
-    //   // 模糊搜索别名
-    //   $link: Op.like,
-    //   // 大于
-    //   $gt: Op.gt,
-    //   // 大于等于
-    //   $gte: Op.gte,
+    // 模糊搜索别名
+    // $link: Op.like,
+    // 大于
+    // $gt: Op.gt,
+    // 大于等于
+    // $gte: Op.gte,
     // },
   };
 

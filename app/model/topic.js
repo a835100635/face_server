@@ -29,9 +29,15 @@ module.exports = app => {
     // 正确选项 A
     correct: STRING,
     // 是否上线 0-下线，1-上线
-    online: INTEGER,
+    online: {
+      type: INTEGER,
+      defaultValue: 0,
+    },
     // 审核 0-待审核，1-审核通过，2-审核不通过
-    status: INTEGER,
+    status: {
+      type: INTEGER,
+      defaultValue: 0,
+    },
     // 创建者
     createUser: INTEGER,
     // 点赞次数

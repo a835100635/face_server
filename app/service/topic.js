@@ -2,7 +2,7 @@
  * 分类服务
  */
 const { Service } = require('egg');
-const BadRequestException = require('../exception/badRequest');
+const { Op } = require('sequelize');
 
 class TopicService extends Service {
   /**
@@ -43,7 +43,7 @@ class TopicService extends Service {
   }
 
   /**
-   * 校验题目是否存在
+   * 校验题目是否存在/获取题目
    * @param {Object} param 参数
    * @param {String|Number} param.value 题目值
    * @param {String} param.filed 具体字段
@@ -54,12 +54,70 @@ class TopicService extends Service {
         [filed]: value,
       },
     });
-    if (!result) {
-      throw new BadRequestException('题目不存在');
+    if (result) {
+      result.dataValues.options = JSON.parse(result.dataValues.options);
     }
-    result.dataValues.options = JSON.parse(result.dataValues.options);
     return result;
   }
+
+  /**
+   * 获取题目列表
+   * @param {*} params 参数
+   * @param root0
+   * @param root0.pageNum
+   * @param root0.pageSize
+   * @return {*}
+   */
+  async list(params, { pageNum, pageSize }) {
+    const { ctx } = this;
+    const topicName = params.topic || '';
+    const startTime = params.startTime || '';
+    const endTime = params.endTime || '';
+    const isDetail = params.detail || false;
+    delete params.topic;
+    delete params.startTime;
+    delete params.endTime;
+    delete params.detail;
+
+    const where = { ...params };
+    if (topicName) {
+      where.topic = {
+        [Op.like]: `%${topicName}%`,
+      };
+    }
+    if (startTime && endTime) {
+      where.createdTime = {
+        [Op.between]: [ startTime, endTime ],
+      };
+    }
+
+    const attributes = [ 'id', 'categoryId', 'topic' ];
+    if (isDetail == 1) {
+      attributes.push('level', 'type', 'answer', 'online', 'status', 'options', 'correct', 'createdTime');
+    }
+
+    const result = await ctx.model.Topic.findAndCountAll({
+      attributes,
+      where,
+      limit: +pageSize,
+      offset: (+pageNum - 1) * +pageSize,
+    });
+    if (result && result.rows && isDetail == 1) {
+      result.rows.forEach(item => {
+        item.dataValues.options = JSON.parse(item.dataValues.options);
+      });
+    }
+    const { count, rows } = result;
+    return {
+      data: {
+        total: count,
+        data: rows,
+        pageNum,
+        pageSize,
+      },
+    };
+  }
+
 }
 
 module.exports = TopicService;
