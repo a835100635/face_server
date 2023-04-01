@@ -3,6 +3,8 @@
  */
 const { Service } = require('egg');
 const { Op } = require('sequelize');
+const { CHECK_TYPE } = require('../../constants/index');
+const BadRequestException = require('../exception/badRequest');
 
 class TopicService extends Service {
   /**
@@ -39,6 +41,35 @@ class TopicService extends Service {
         id: data.id,
       },
     });
+    return result;
+  }
+
+  /**
+   * 获取题目
+   * @param { String } topicId 题目id
+   * @param { Number } checkType 查看类型
+   */
+  async topic({ topicId, checkType }) {
+    const { READ, TEST, ALL } = CHECK_TYPE;
+    const publicAttr = [ 'id', 'categoryId', 'topic', 'level' ];
+    const attributesMap = {
+      [`${READ}`]: publicAttr.concat([ 'answer', 'like', 'dislike' ]),
+      [`${TEST}`]: publicAttr.concat([ 'options', 'type', 'correct' ]),
+    };
+    console.log('==', checkType, attributesMap[checkType]);
+    const attributes = checkType == ALL ? [].concat(attributesMap[READ], attributesMap[TEST]) : attributesMap[checkType];
+    const result = await this.ctx.model.Topic.findOne({
+      attributes,
+      where: {
+        id: topicId,
+      },
+    });
+    if (!result) {
+      throw new BadRequestException('题目不存在');
+    }
+    if (result.dataValues.options) {
+      result.dataValues.options = JSON.parse(result.dataValues.options);
+    }
     return result;
   }
 

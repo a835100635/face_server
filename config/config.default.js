@@ -32,7 +32,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1679032735880_6613';
 
   // add your middleware config here
-  config.middleware = [ 'log', 'responseFormat', 'errorHandler' ];
+  config.middleware = [ 'log', 'responseFormat', 'errorHandler', 'authentication' ];
 
   // add your user config here
   const userConfig = {

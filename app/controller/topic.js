@@ -2,6 +2,7 @@
 
 const { Controller } = require('egg');
 const BadRequestException = require('../exception/badRequest');
+const { CHECK_TYPE } = require('../../constants/index');
 
 class TopicController extends Controller {
   /**
@@ -67,15 +68,17 @@ class TopicController extends Controller {
   }
 
   /**
-   * 获取题目列表
+   * 获取题目
    */
   async topic() {
     const { ctx } = this;
+    // checkType 0 题目 1 考试 2 完整
     const { topicId } = ctx.params;
+    const { checkType = CHECK_TYPE.READ } = ctx.query;
     if (!topicId) {
       throw new BadRequestException('缺少题目id');
     }
-    const topic = await ctx.service.topic.checkTopic({ value: topicId });
+    const topic = await ctx.service.topic.topic({ topicId, checkType });
     ctx.body = topic;
   }
 

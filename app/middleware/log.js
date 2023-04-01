@@ -24,7 +24,7 @@ module.exports = function LogMiddleware() {
     ctx.logger.info(
       '[response] end, status: %s, cost: %s, res: %s',
       ctx.response.status, `${Date.now() - startTime}s`,
-      ctx.response.body ? `${JSON.stringify(ctx.response.body).substring(0, 1000)}...` : ctx.response.body // 截取1000个字符
+      ctx.response.body ? `${JSON.stringify(ctx.response.body).substring(0, 50)}...` : ctx.response.body // 截取1000个字符
     );
   };
 };
