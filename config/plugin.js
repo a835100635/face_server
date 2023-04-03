@@ -12,4 +12,10 @@ module.exports = {
     enable: true,
     package: 'egg-sequelize',
   },
+  jwt: {
+    // 是否开启
+    enable: true,
+    // 依赖的包
+    package: 'egg-jwt',
+  },
 };

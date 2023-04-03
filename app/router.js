@@ -4,7 +4,8 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller, logger } = app;
+  const { router, controller, logger, config } = app;
+  const { apiPrefix } = config;
 
   app.beforeStart(async function() {
     logger.info('app beforeStart--->');
@@ -20,14 +21,25 @@ module.exports = app => {
     });
   });
 
-  router.post('/api/category', controller.category.add);
-  router.delete('/api/category/:categoryId', controller.category.delete);
-  router.put('/api/category', controller.category.update);
-  router.get('/api/category', controller.category.category);
+  // 登录
+  router.post(`${apiPrefix}/api/login`, controller.user.login);
+  // 用户
+  router.post(`${apiPrefix}/api/user`, controller.user.updateUserInfo);
 
-  router.post('/api/topic', controller.topic.add);
-  router.delete('/api/topic/:topicId', controller.topic.delete);
-  router.put('/api/topic', controller.topic.update);
-  router.get('/api/topic', controller.topic.list);
-  router.get('/api/topic/:topicId', controller.topic.topic);
+  // 分类
+  router.post(`${apiPrefix}/api/category`, controller.category.add);
+  router.delete(`${apiPrefix}/api/category/:categoryId`, controller.category.delete);
+  router.put(`${apiPrefix}/api/category`, controller.category.update);
+  router.get(`${apiPrefix}/api/category`, controller.category.category);
+  // 题目
+  router.post(`${apiPrefix}/api/topic`, controller.topic.add);
+  router.delete(`${apiPrefix}/api/topic/:topicId`, controller.topic.delete);
+  router.put(`${apiPrefix}/api/topic`, controller.topic.update);
+  router.get(`${apiPrefix}/api/topic`, controller.topic.list);
+  router.get(`${apiPrefix}/api/topic/:topicId`, controller.topic.topic);
+  // 评论
+  router.post(`${apiPrefix}/api/comment`, controller.comment.add);
+
+  // 题目点赞
+  router.post(`${apiPrefix}/api/topic/like`, controller.likeStatus.like);
 };

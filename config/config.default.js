@@ -46,6 +46,19 @@ module.exports = appInfo => {
     consoleLevel: 'DEBUG',
   };
 
+  // 自定义 token 的加密条件字符串
+  config.jwt = {
+    secret: process.env.JWT_SECRET || 'face-egg',
+    // 默认是关闭，如果开启，这会对所有请求进行自动校验；限定请求，请设置match做路径匹配
+    // enable: true,
+    match: /^\/api/, // 匹配的请求，会走jwt校验，否则忽略；例如登录接口需要被忽略；
+    // jwt.sign(***,***,[options,***])方法中，options的默认设置可以在这里配置；
+    sign: {
+      // 多少s后过期。actionToken.js中,jwt.sing(plyload,secret,{expiresIn:number})会被合并，调用时设置优先级更高;
+      expiresIn: process.env.JWT_EXPIRES || 60 * 60 * 24 * 7,
+    },
+  };
+
   config.sequelize = {
     dialect: 'mysql', // 数据库类型
     database: DB_NAME, // 数据库名称
@@ -68,6 +81,11 @@ module.exports = appInfo => {
     // $gte: Op.gte,
     // },
   };
+
+  // api 前缀
+  config.apiPrefix = process.env.API_PREFIX || '';
+  // token字段
+  config.tokenField = process.env.TOKEN_PREFIX || 'X-Face-Token';
 
   config.cluster = {
     listen: {
