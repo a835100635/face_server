@@ -8,4 +8,9 @@ module.exports = {
     // 完整
     ALL: 2,
   },
+  // 枚举类型，表示实体类型
+  LIKE_ENTITY_TYPES: {
+    TOPIC: 'topic', // 题目
+    COMMENT: 'comment', // 评论
+  },
 };
