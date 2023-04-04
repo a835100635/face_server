@@ -13,4 +13,9 @@ module.exports = {
     TOPIC: 'topic', // 题目
     COMMENT: 'comment', // 评论
   },
+  // 点赞状态
+  LIKE_STATUS: {
+    LIKE: 'LIKE', // 点赞
+    DISLIKE: 'DISLIKE', // 点踩
+  },
 };

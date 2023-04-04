@@ -3,7 +3,7 @@
  */
 const { Service } = require('egg');
 const { Op } = require('sequelize');
-const { CHECK_TYPE } = require('../../constants/index');
+const { CHECK_TYPE, LIKE_STATUS } = require('../../constants/index');
 const BadRequestException = require('../exception/badRequest');
 
 class TopicService extends Service {
@@ -50,19 +50,39 @@ class TopicService extends Service {
    * @param { Number } checkType 查看类型
    */
   async topic({ topicId, checkType }) {
+    const { ctx, app } = this;
+    const sequelize = app.Sequelize;
+    const { literal } = sequelize;
     const { READ, TEST, ALL } = CHECK_TYPE;
     const publicAttr = [ 'id', 'categoryId', 'topic', 'level' ];
     const attributesMap = {
-      [`${READ}`]: publicAttr.concat([ 'answer', 'like', 'dislike' ]),
+      [`${READ}`]: publicAttr.concat([ 'answer' ]),
       [`${TEST}`]: publicAttr.concat([ 'options', 'type', 'correct' ]),
     };
-    console.log('==', checkType, attributesMap[checkType]);
     const attributes = checkType == ALL ? [].concat(attributesMap[READ], attributesMap[TEST]) : attributesMap[checkType];
-    const result = await this.ctx.model.Topic.findOne({
-      attributes,
+    const result = await ctx.model.Topic.findOne({
+      attributes: [
+        ...attributes,
+        // literal 可加入自定义sql
+        // 查询点赞数量
+        [ literal(`(select count(status) from LikeStatus where status = '${LIKE_STATUS.LIKE}')`), 'likeCount' ],
+        // 查询点踩数量
+        [ literal(`(select count(status) from LikeStatus where status = '${LIKE_STATUS.DISLIKE}')`), 'dislikeCount' ],
+        // 查询是否点赞
+        [ literal(`(select status from LikeStatus where status = '${LIKE_STATUS.LIKE}' and user_id = '${ctx.state.userInfo.openid}')`), 'isLike' ],
+        // 查询是否点踩
+        [ literal(`(select status from LikeStatus where status = '${LIKE_STATUS.DISLIKE}' and user_id = '${ctx.state.userInfo.openid}')`), 'isDislike' ],
+      ],
       where: {
         id: topicId,
       },
+      include: [
+        {
+          model: ctx.model.LikeStatus,
+          // 设置关联查询的字段 为空时只会查询数量
+          attributes: [],
+        },
+      ],
     });
     if (!result) {
       throw new BadRequestException('题目不存在');

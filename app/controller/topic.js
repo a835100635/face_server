@@ -19,10 +19,9 @@ class TopicController extends Controller {
     options = JSON.stringify(options);
     const result = await ctx.service.topic.add({
       categoryId, topic, level, type, answer, options, correct, desc,
+      createUser: ctx.userInfo.openid,
       online: 0,
       status: 0,
-      like: 0,
-      dislike: 0,
     });
     result.dataValues.options = JSON.parse(result.dataValues.options);
     ctx.body = result.dataValues;
