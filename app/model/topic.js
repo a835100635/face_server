@@ -3,13 +3,15 @@
  * @param { Egg } app egg实例
  */
 module.exports = app => {
-  const { STRING, INTEGER, DATE, NOW } = app.Sequelize;
-  const category = app.model.define('Topic', {
+  const { STRING, INTEGER, DATE, NOW, UUIDV4, DataTypes } = app.Sequelize;
+  const topic = app.model.define('Topic', {
     // 题目id
     id: {
-      type: INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID,
+      // autoIncrement: true,
       primaryKey: true,
+      defaultValue: UUIDV4,
+      notNull: true,
     },
     // 分类
     categoryId: INTEGER,
@@ -40,16 +42,6 @@ module.exports = app => {
     },
     // 创建者
     createUser: INTEGER,
-    // 点赞次数
-    like: {
-      type: INTEGER,
-      defaultValue: 0,
-    },
-    // 点踩次数
-    dislike: {
-      type: INTEGER,
-      defaultValue: 0,
-    },
     // 描述
     desc: STRING,
     // 创建时间
@@ -69,7 +61,13 @@ module.exports = app => {
     freezeTableName: true,
     // timestamps默认值是true，如实是true会自动添加上 create_time 和update_time两个字段
     timestamps: false,
-
   });
-  return category;
+  // egg-sequelize 插件在loadDatabase的时候会执行associate()，建立模型之间的关系
+  // 一个题目可以有多个点赞
+  topic.associate = () => {
+    app.model.Topic.hasMany(app.model.LikeStatus, {
+      foreignKey: 'topicId',
+      sourceKey: 'id' });
+  };
+  return topic;
 };

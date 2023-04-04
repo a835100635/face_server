@@ -37,6 +37,10 @@ class UserService extends Service {
     try {
       await ctx.model.User.update({
         ...data,
+      }, {
+        where: {
+          openid,
+        },
       });
     } catch (error) {
       throw new BadRequestException('更新用户信息失败');
