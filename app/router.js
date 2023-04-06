@@ -40,6 +40,8 @@ module.exports = app => {
   // 评论
   router.post(`${apiPrefix}/api/comment`, controller.comment.add);
 
-  // 题目点赞
+  // 题目、评论点赞点踩
   router.post(`${apiPrefix}/api/topic/like`, controller.likeStatus.like);
+  // 题目、评论取消点赞点踩
+  router.post(`${apiPrefix}/api/topic/unlike`, controller.likeStatus.unlike);
 };

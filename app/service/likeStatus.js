@@ -31,14 +31,13 @@ class LikeStatusService extends Service {
    * @param root0.type
    * @param root0.status
    */
-  async deleteLikeStatus({ userId, topicId, type, status }) {
+  async deleteLikeStatus({ userId, topicId, type }) {
     const { ctx } = this;
     const likeStatus = await ctx.model.LikeStatus.destroy({
       where: {
         userId,
         topicId,
         type,
-        status,
       },
     });
     if (!likeStatus) {
