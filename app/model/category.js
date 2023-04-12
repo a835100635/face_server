@@ -7,7 +7,7 @@ module.exports = app => {
   const { STRING, INTEGER } = app.Sequelize;
   const category = app.model.define('Category', {
     // 分类id html css。。。。
-    categoryId: {
+    id: {
       type: INTEGER,
       autoIncrement: true,
       primaryKey: true,

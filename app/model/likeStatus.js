@@ -53,7 +53,14 @@ module.exports = app => {
   likeStatus.options.modelDependencies = [ Topic ];
   // 关联关系
   likeStatus.associate = () => {
-    app.model.LikeStatus.belongsTo(app.model.Topic, { foreignKey: 'topicId', targetKey: 'id' });
+    app.model.Topic.hasMany(app.model.LikeStatus, {
+      foreignKey: 'topicId',
+      sourceKey: 'id' }
+    );
+    app.model.LikeStatus.belongsTo(app.model.Topic, { 
+      foreignKey: 'topicId', 
+      targetKey: 'id' 
+    });
   };
   return likeStatus;
 };
