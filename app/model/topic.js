@@ -2,6 +2,8 @@
  * 题目实体
  * @param { Egg } app egg实例
  */
+const category = require('./category');
+
 module.exports = app => {
   const { STRING, INTEGER, DATE, NOW, UUIDV4, DataTypes } = app.Sequelize;
   const topic = app.model.define('Topic', {
@@ -41,7 +43,7 @@ module.exports = app => {
       defaultValue: 0,
     },
     // 创建者
-    createUser: INTEGER,
+    createUser: STRING(64),
     // 描述
     desc: STRING,
     // 创建时间
@@ -64,10 +66,17 @@ module.exports = app => {
   });
   // egg-sequelize 插件在loadDatabase的时候会执行associate()，建立模型之间的关系
   // 一个题目可以有多个点赞
+  topic.options.modelDependencies = [ category ];
   topic.associate = () => {
-    app.model.Topic.hasMany(app.model.LikeStatus, {
-      foreignKey: 'topicId',
-      sourceKey: 'id' });
+    // 一个题目只能属于一个分类
+    app.model.Category.hasMany(app.model.Topic,
+      { foreignKey: 'categoryId', sourceKey: 'id' }
+    );
+    app.model.Topic.belongsTo(app.model.Category,
+      { foreignKey: 'categoryId', targetKey: 'id' }
+    );
   };
   return topic;
 };
+
+

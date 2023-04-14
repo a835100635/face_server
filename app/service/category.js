@@ -3,6 +3,7 @@
  */
 const { Service } = require('egg');
 const BadRequestException = require('../exception/badRequest');
+const Topic = require('../model/topic');
 
 class CategoryService extends Service {
   /**
@@ -62,8 +63,21 @@ class CategoryService extends Service {
    * 获取分类
    */
   async category() {
-    const result = await this.ctx.model.Category.findAll({
-      attributes: [ 'categoryId', 'typeId', 'categoryName' ],
+    const { ctx, app } = this;
+    const { Category, Topic } = ctx.model;
+    const result = await Category.findAll({
+      attributes: [ 'id', 'typeId', 'categoryName',
+        // 查询关联表的数量 
+        [app.Sequelize.literal(`(SELECT COUNT(*) FROM Topic WHERE \`Topic\`.\`category_id\`  = \`Category\`.\`id\`)`), 'topicCount']
+      ],
+      include: [
+        {
+          model: Topic,
+          // 设置关联查询的字段 为空时只会查询数量
+          attributes: [],
+        },
+      ],
+      group: ['Category.id']
     });
     return result;
   }
