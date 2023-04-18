@@ -35,7 +35,7 @@ class CategoryController extends Controller {
       throw new BadRequestException('缺少分类id');
     }
     // 判断是否存在
-    const category = await ctx.service.category.checkCategory({ value: categoryId, field: 'categoryId' });
+    const category = await ctx.service.category.checkCategory({ value: categoryId, field: 'id' });
     if (!category) {
       throw new BadRequestException(`“${categoryId}” 分类不存在`);
     }
@@ -48,15 +48,15 @@ class CategoryController extends Controller {
    */
   async update() {
     const { ctx } = this;
-    const { typeId, categoryName, categoryId } = ctx.request.body;
-    if (!categoryName || !categoryId || !([ 'string', 'number' ].includes(typeof typeId))) {
-      throw new BadRequestException('categoryId 与 typeId、categoryName必传');
+    const { typeId, categoryName, id } = ctx.request.body;
+    if (!categoryName || !id || !([ 'string', 'number' ].includes(typeof typeId))) {
+      throw new BadRequestException('id 与 typeId、categoryName必传');
     }
-    const category = await ctx.service.category.checkCategory({ value: categoryId });
+    const category = await ctx.service.category.checkCategory({ value: id });
     if (!category) {
       throw new BadRequestException(`“${categoryName}”分类不存在`);
     }
-    if (category.categoryName === categoryName && category.categoryId != categoryId) {
+    if (category.categoryName === categoryName && category.id != id) {
       throw new BadRequestException(`“${categoryName}”分类名称已存在`);
     }
     const result = await ctx.service.category.updated(ctx.request.body);
