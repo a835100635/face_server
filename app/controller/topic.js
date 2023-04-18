@@ -11,11 +11,15 @@ class TopicController extends Controller {
   async add() {
     const { ctx } = this;
     verifyTopicData(ctx.request.body, ctx);
-    const topicData = await ctx.service.topic.checkTopic({ value: ctx.request.body.topic, filed: 'topic' });
+    let { categoryId, topic, level, type, answer, options, correct, desc } = ctx.request.body;
+    const topicData = await ctx.service.topic.checkTopic({ value: topic, filed: 'topic' });
     if (topicData) {
       throw new BadRequestException('题目已存在');
     }
-    let { categoryId, topic, level, type, answer, options, correct, desc } = ctx.request.body;
+    const categoryData = await ctx.service.category.checkCategory({ value: categoryId });
+    if (!categoryData) {
+      throw new BadRequestException('分类不存在');
+    }
     options = JSON.stringify(options);
     const result = await ctx.service.topic.add({
       categoryId, topic, level, type, answer, options, correct, desc,
@@ -96,7 +100,10 @@ class TopicController extends Controller {
       }
     });
     if (categoryId) {
-      await ctx.service.category.checkCategory({ value: categoryId });
+      const category = await ctx.service.category.checkCategory({ value: categoryId });
+      if (!category) {
+        throw new BadRequestException('分类不存在');
+      }
     }
     const isKey = [ 'categoryId', 'topic', 'level', 'type', 'answer', 'online', 'status', 'createUser', 'updatedTime', 'startTime', 'endTime', 'detail' ];
     const condition = isKey.reduce((pre, item) => {

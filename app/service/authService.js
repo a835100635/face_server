@@ -4,7 +4,7 @@
 const { Service } = require('egg');
 const AuthenticationException = require('../exception/authenticationException');
 
-class CategoryService extends Service {
+class AuthService extends Service {
   verifyToken(token) {
     const { ctx, app } = this;
     const { jwt, config } = app;
@@ -26,4 +26,4 @@ class CategoryService extends Service {
   }
 }
 
-module.exports = CategoryService;
+module.exports = AuthService;

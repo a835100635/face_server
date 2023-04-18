@@ -13,17 +13,23 @@ class CategoryService extends Service {
    */
   async add(body) {
     const result = await this.ctx.model.Category.create(body);
-    return result;
+    if (!result) {
+      throw new BadRequestException('新增失败');
+    }
+    return {
+      ...result.dataValues,
+      topicCount: 0,
+    };
   }
 
   /**
    * 删除分类
-   * @param {String} categoryId 分类id
+   * @param {String} id 分类id
    */
-  async delete(categoryId) {
+  async delete(id) {
     await this.ctx.model.Category.destroy({
       where: {
-        categoryId,
+        id
       },
     });
   }
@@ -34,23 +40,23 @@ class CategoryService extends Service {
    * @return { Object } 更新后的分类
    */
   async updated(body) {
-    const { categoryId } = body;
+    const { id } = body;
     const result = await this.ctx.model.Category.update(body, {
       where: {
-        categoryId,
+        id,
       },
     });
     if (!result) {
       throw new BadRequestException('更新失败');
     }
-    return this.checkCategory({ value: categoryId });
+    return this.checkCategory({ value: id });
   }
 
   /**
    * 查找分类
-   * @param { Object } params { value, field: categoryName | categoryId }
+   * @param { Object } params { value, field: categoryName | id }
    */
-  async checkCategory({ value, field = 'categoryId' }) {
+  async checkCategory({ value, field = 'id' }) {
     const result = await this.ctx.model.Category.findOne({
       where: {
         [field]: value,
@@ -66,7 +72,7 @@ class CategoryService extends Service {
     const { ctx, app } = this;
     const { Category, Topic } = ctx.model;
     const result = await Category.findAll({
-      attributes: [ 'id', 'typeId', 'categoryName',
+      attributes: [ 'id', 'typeId', 'categoryName', 'desc',
         // 查询关联表的数量 
         [app.Sequelize.literal(`(SELECT COUNT(*) FROM Topic WHERE \`Topic\`.\`category_id\`  = \`Category\`.\`id\`)`), 'topicCount']
       ],
