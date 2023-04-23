@@ -20,7 +20,6 @@ class TopicController extends Controller {
     if (!categoryData) {
       throw new BadRequestException('分类不存在');
     }
-    options = JSON.stringify(options);
     const result = await ctx.service.topic.add({
       categoryId, topic, level, type, answer, options, correct, desc,
       createUser: ctx.state.userInfo.openid,
@@ -130,21 +129,14 @@ function verifyTopicData(topicData, ctx) {
   if (!topic) {
     throw new BadRequestException('题目必传');
   }
-  if (!level || (level < 1 || level > 5) || level % 1 !== 0) {
+  if (![1,2,3,4,5].includes(level)) {
     throw new BadRequestException('level值为1-5整数区间');
   }
-  if (!type || (type < 1 || type > 4) || type % 1 !== 0) {
+  if (![1,2,3,4].includes(type)) {
     throw new BadRequestException('type类型不准确');
   }
-  if ([ 2, 4 ].includes(type) && !answer) {
+  if (!answer) {
     throw new BadRequestException('填空题、开放题答案必传');
-  }
-  const kl = Object.keys(options);
-  if ([ 1, 3 ].includes(type) && (!kl.length || kl.length < 2)) {
-    if (!options[correct]) {
-      throw new BadRequestException('答案不在选项中');
-    }
-    throw new BadRequestException('选项必传且选项必须2个及以上');
   }
 }
 
