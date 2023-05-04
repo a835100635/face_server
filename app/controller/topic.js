@@ -36,12 +36,12 @@ class TopicController extends Controller {
   async delete() {
     const { ctx } = this;
     const { topicId } = ctx.params;
-    await ctx.service.topic.checkTopic({ value: topicId, filed: 'id' });
+    await ctx.service.topic.checkTopic({ value: topicId });
     const result = await ctx.service.topic.delete(topicId);
-    if (!result.length) {
+    if (!result) {
       throw new BadRequestException('删除失败');
     }
-    ctx.body = null;
+    ctx.body = {};
   }
 
   /**
@@ -53,12 +53,11 @@ class TopicController extends Controller {
     if (!id) {
       throw new BadRequestException('题目id必传');
     }
-    const topicData = await ctx.service.topic.checkTopic({ value: id.topic });
-    if (topicData) {
-      throw new BadRequestException('题目已存在');
+    const topicData = await ctx.service.topic.checkTopic({ value: id });
+    if (!topicData) {
+      throw new BadRequestException('题目不存在');
     }
     verifyTopicData(ctx.request.body, ctx);
-    options = JSON.stringify(options);
     const result = await ctx.service.topic.update({
       id, categoryId, topic, level, type, answer, options, correct, desc,
     });
@@ -134,9 +133,6 @@ function verifyTopicData(topicData, ctx) {
   }
   if (![1,2,3,4].includes(type)) {
     throw new BadRequestException('type类型不准确');
-  }
-  if (!answer) {
-    throw new BadRequestException('填空题、开放题答案必传');
   }
 }
 

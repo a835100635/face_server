@@ -54,10 +54,10 @@ class TopicService extends Service {
     const sequelize = app.Sequelize;
     const { literal } = sequelize;
     const { READ, TEST, ALL } = CHECK_TYPE;
-    const publicAttr = [ 'id', 'categoryId', 'topic', 'level' ];
+    const publicAttr = ['id', 'categoryId', 'topic', 'level'];
     const attributesMap = {
-      [`${READ}`]: publicAttr.concat([ 'answer' ]),
-      [`${TEST}`]: publicAttr.concat([ 'options', 'type', 'correct' ]),
+      [`${READ}`]: publicAttr.concat(['answer']),
+      [`${TEST}`]: publicAttr.concat(['options', 'type', 'correct']),
     };
     const attributes = checkType == ALL ? [].concat(attributesMap[READ], attributesMap[TEST]) : attributesMap[checkType];
     const result = await ctx.model.Topic.findOne({
@@ -65,13 +65,13 @@ class TopicService extends Service {
         ...attributes,
         // literal 可加入自定义sql
         // 查询点赞数量
-        [ literal(`(select count(status) from LikeStatus where status = '${LIKE_STATUS.LIKE}')`), 'likeCount' ],
+        [literal(`(select count(status) from LikeStatus where status = '${LIKE_STATUS.LIKE}')`), 'likeCount'],
         // 查询点踩数量
-        [ literal(`(select count(status) from LikeStatus where status = '${LIKE_STATUS.DISLIKE}')`), 'dislikeCount' ],
+        [literal(`(select count(status) from LikeStatus where status = '${LIKE_STATUS.DISLIKE}')`), 'dislikeCount'],
         // 查询是否点赞
-        [ literal(`(select status from LikeStatus where status = '${LIKE_STATUS.LIKE}' and user_id = '${ctx.state.userInfo.openid}')`), 'isLike' ],
+        [literal(`(select status from LikeStatus where status = '${LIKE_STATUS.LIKE}' and user_id = '${ctx.state.userInfo.openid}')`), 'isLike'],
         // 查询是否点踩
-        [ literal(`(select status from LikeStatus where status = '${LIKE_STATUS.DISLIKE}' and user_id = '${ctx.state.userInfo.openid}')`), 'isDislike' ],
+        [literal(`(select status from LikeStatus where status = '${LIKE_STATUS.DISLIKE}' and user_id = '${ctx.state.userInfo.openid}')`), 'isDislike'],
       ],
       where: {
         id: topicId,
@@ -138,13 +138,13 @@ class TopicService extends Service {
     }
     if (startTime && endTime) {
       where.createdTime = {
-        [Op.between]: [ startTime, endTime ],
+        [Op.between]: [startTime, endTime],
       };
     }
 
-    const attributes = [ 'id', 'categoryId', 'topic' ];
+    const attributes = ['id', 'categoryId', 'topic'];
     if (isDetail == 1) {
-      attributes.push('level', 'type', 'answer', 'online', 'status', 'options', 'correct', 'createdTime');
+      attributes.push('level', 'type', 'answer', 'online', 'status', 'options', 'correct', 'createdTime', 'updatedTime', 'desc');
     }
 
     const result = await ctx.model.Topic.findAndCountAll({
@@ -153,11 +153,6 @@ class TopicService extends Service {
       limit: +pageSize,
       offset: (+pageNum - 1) * +pageSize,
     });
-    if (result && result.rows && isDetail == 1) {
-      result.rows.forEach(item => {
-        item.dataValues.options = JSON.parse(item.dataValues.options);
-      });
-    }
     const { count, rows } = result;
     return {
       data: {
