@@ -13,7 +13,9 @@
     "egg-jwt": "^3.1.7",
     "egg-scripts": "^2",
     "egg-sequelize": "^6.0.0",
-    "mysql2": "^3.2.0"
+    "md5": "^2.3.0",
+    "mysql2": "^3.2.0",
+    "qiniu": "^7.8.0"
   },
   "devDependencies": {
     "egg-bin": "^5",
