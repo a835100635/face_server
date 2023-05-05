@@ -41,6 +41,19 @@ class UserController extends Controller {
     // 判断是否存在用户
     const user = await ctx.service.user.user(openid);
     if (user) {
+      // 自定义头像
+      const { customAvatarUrl } = ctx.request.body;
+      if (customAvatarUrl) {
+        // 七牛云临时文件移动到正式文件夹
+        const userDir = process.env.QINIU_USER_IMG;
+        // 文件名
+        const filename = customAvatarUrl.split('/')[customAvatarUrl.split('/').length - 1];
+        // 目标文件名
+        const targetFileName = `${userDir}${filename}`
+        const { url } = await ctx.service.uploadFiles.moveFile(customAvatarUrl, targetFileName);
+        // 更新用户信息
+        ctx.request.body.customAvatarUrl = url || ctx.request.body.customAvatarUrl;
+      }
       ctx.body = await ctx.service.user.update(openid, ctx.request.body);
     } else {
       ctx.body = await ctx.service.user.add(openid, ctx.request.body);
