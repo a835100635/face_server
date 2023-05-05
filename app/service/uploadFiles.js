@@ -1,5 +1,5 @@
 /**
- * 用户服务
+ * 上传文件至七牛云
  */
 const { Service } = require('egg');
 const fs = require("fs");
@@ -23,6 +23,7 @@ config.zone = qiniu.zone[process.env.QINIU_ZONE];
 // config.useHttpsDomain = false;
 // 上传是否使用cdn加速
 // config.useCdnDomain = false;
+// 参数
 const options = {
   scope: bucket,
   expires: 7200 * 4,
@@ -35,6 +36,11 @@ const uploadToken = putPolicy.uploadToken(mac);
 
 class UploadFilesService extends Service {
   // 上传文件 默认上传到七牛云临时文件夹
+  /**
+   * 上传文件至临时文件夹
+   * @param {*} data 
+   * @returns 文件存放路径
+   */
   async upload(data) {
     // 避免重复上传文件 时间戳+随机数
     const timestamp = (new Date()).getTime();
@@ -82,19 +88,50 @@ class UploadFilesService extends Service {
   async moveFile(filename, target) {
     const bucketManager = new qiniu.rs.BucketManager(mac, config);
     try {
-      await new Promise((resolve, reject) => {
+      const result = await new Promise((resolve, reject) => {
         bucketManager.move(bucket, filename, bucket, target, options, (err, respBody, respInfo) => {
           if (err) {
-            reject(err);
+            throw err;
+          }
+          if (respInfo.statusCode === 200) {
+            resolve(respBody || true);
           } else {
-            resolve(respBody);
+            reject(respBody);
           }
         });
       });
+      return result ? target : null;
     } catch (error) {
-      throw new BadRequestException('移动文件失败: ' + error.error);
+      throw new BadRequestException('文件处理失败: ' + error.error);
     }
   }
+
+  /**
+   * 删除文件
+   * @param {string} filename 文件路径
+   * @returns {boolean} 是否删除成功
+   */
+  async deleteFile(filename) {
+    const bucketManager = new qiniu.rs.BucketManager(mac, config);
+    try {
+      const result = await new Promise((resolve, reject) => {
+        bucketManager.delete(bucket, filename, (err, respBody, respInfo) => {
+          if (err) {
+            throw err;
+          }
+          if (respInfo.statusCode === 200) {
+            resolve(respBody || true);
+          } else {
+            reject(respBody);
+          }
+        });
+      });
+      return result;
+    } catch (error) {
+      throw new BadRequestException('文件处理失败: ' + error.error);
+    }
+  }
+
 }
 
 module.exports = UploadFilesService;

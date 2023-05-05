@@ -25,8 +25,6 @@ module.exports = app => {
   router.post(`${apiPrefix}/api/login`, controller.user.login);
   // 用户
   router.post(`${apiPrefix}/api/user`, controller.user.updateUserInfo);
-  // 修改用户信息
-  router.put(`${apiPrefix}/api/user`, controller.user.updateUserInfo);
 
   // 分类
   router.post(`${apiPrefix}/api/category`, controller.category.add);
