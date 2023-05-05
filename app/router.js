@@ -7,7 +7,7 @@ module.exports = app => {
   const { router, controller, logger, config } = app;
   const { apiPrefix } = config;
 
-  app.beforeStart(async function() {
+  app.beforeStart(async function () {
     logger.info('app beforeStart--->');
     // 开发环境使用，会删除数据表 force  false 为不覆盖 true会删除再创建
     await app.model.sync({
@@ -25,6 +25,8 @@ module.exports = app => {
   router.post(`${apiPrefix}/api/login`, controller.user.login);
   // 用户
   router.post(`${apiPrefix}/api/user`, controller.user.updateUserInfo);
+  // 修改用户信息
+  router.put(`${apiPrefix}/api/user`, controller.user.updateUserInfo);
 
   // 分类
   router.post(`${apiPrefix}/api/category`, controller.category.add);
@@ -44,4 +46,8 @@ module.exports = app => {
   router.post(`${apiPrefix}/api/topic/like`, controller.likeStatus.like);
   // 题目、评论取消点赞点踩
   router.post(`${apiPrefix}/api/topic/unlike`, controller.likeStatus.unlike);
+
+  // 上传文件
+  router.post(`${apiPrefix}/api/upload`, controller.uploadFiles.upload);
+
 };

@@ -26,6 +26,11 @@ module.exports = app => {
       type: STRING(255),
       allowNull: true,
     },
+    // 自定义头像
+    customAvatarUrl: {
+      type: STRING(255),
+      allowNull: true,
+    },
     // 性别
     gender: {
       type: INTEGER,
