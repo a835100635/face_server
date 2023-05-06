@@ -40,14 +40,18 @@ class UserService extends Service {
       }, {
         where: {
           openid,
-        },
+        }
       });
+      const userData = await ctx.model.User.findOne({
+        where: {
+          openid,
+        },
+        attributes: ['id', 'gender', 'avatarUrl', 'city', 'country', 'province', 'nickName', 'userName', 'customAvatarUrl', 'language', 'slogan', 'score']
+      })
+      return userData;
     } catch (error) {
       throw new BadRequestException('更新用户信息失败');
     }
-    return {
-      ...data,
-    };
   }
 
   /**
@@ -58,16 +62,16 @@ class UserService extends Service {
   async add(openid, data) {
     const { ctx } = this;
     try {
-      await ctx.model.User.create({
+      const userData = await ctx.model.User.create({
         openid,
         ...data,
+      }, {
+        attributes: ['gender', 'avatarUrl', 'city', 'country', 'province', 'nickName', 'userName', 'customAvatarUrl', 'language',]
       });
+      return userData;
     } catch (error) {
       throw new BadRequestException('添加用户信息失败');
     }
-    return {
-      ...data,
-    };
   }
 
 }

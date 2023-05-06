@@ -6,6 +6,11 @@
 module.exports = app => {
   const { STRING, INTEGER, DATE, NOW } = app.Sequelize;
   const user = app.model.define('User', {
+    // 用户ID
+    id: {
+      type: STRING(6),
+      defaultValue: '000000'
+    },
     // 微信同步
     openid: {
       type: STRING(64),
@@ -20,6 +25,17 @@ module.exports = app => {
     nickName: {
       type: STRING(64),
       allowNull: true,
+    },
+    // 个性签名
+    slogan: {
+      type: STRING(30),
+      allowNull: true,
+    },
+    // 积分
+    score: {
+      type: INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     // 头像
     avatarUrl: {
@@ -75,5 +91,19 @@ module.exports = app => {
     // timestamps默认值是true，如实是true会自动添加上 create_time 和update_time两个字段
     timestamps: false,
   });
+
+  // 实现 新增用户时id自增长，且6位数，以 000001、000002这种格式存在
+  user.beforeCreate((user, options) => {
+    return user.max('id').then(maxId => {
+      let newId = parseInt(maxId, 10) + 1;
+      if (isNaN(newId)) {
+        newId = 1;
+      }
+      // 格式化 id
+      user.id = String(newId).padStart(6, '0');
+      return user;
+    });
+  });
+
   return user;
 };
