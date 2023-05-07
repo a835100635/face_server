@@ -50,11 +50,19 @@ class UserController extends Controller {
         const filename = customAvatarUrl.split('/')[customAvatarUrl.split('/').length - 1];
         // 目标文件名
         const targetFileName = `${userDir}${filename}`
-        const { url } = await ctx.service.uploadFiles.moveFile(customAvatarUrl, targetFileName);
+        const newFilePath = await ctx.service.uploadFiles.moveFile(customAvatarUrl, targetFileName);
+        if (!newFilePath) {
+          throw new BadRequestException('头像处理失败');
+        }
         // 更新用户信息
-        ctx.request.body.customAvatarUrl = url || ctx.request.body.customAvatarUrl;
+        ctx.request.body.customAvatarUrl = newFilePath;
       }
-      ctx.body = await ctx.service.user.update(openid, ctx.request.body);
+      // 自定义头像设置为空
+      if ('customAvatarUrl' in ctx.request.body && ['', null, undefined].includes(customAvatarUrl) && user.customAvatarUrl) {
+        await ctx.service.uploadFiles.deleteFile(user.customAvatarUrl);
+      }
+      const result = await ctx.service.user.update(openid, ctx.request.body);
+      ctx.body = result;
     } else {
       ctx.body = await ctx.service.user.add(openid, ctx.request.body);
     }

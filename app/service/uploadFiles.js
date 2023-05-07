@@ -38,16 +38,14 @@ class UploadFilesService extends Service {
   // 上传文件 默认上传到七牛云临时文件夹
   /**
    * 上传文件至临时文件夹
-   * @param {*} data 
+   * @param {*} stream 文件流 
    * @returns 文件存放路径
    */
-  async upload(data) {
+  async upload(stream) {
     // 避免重复上传文件 时间戳+随机数
     const timestamp = (new Date()).getTime();
     const randomNum = Math.ceil(Math.random() * 1000);
     try {
-      // 获取 Stream文件流
-      const stream = await data.getFileStream(); // 文件不存在将响应400错误
       // 文件扩展名称
       const extname = path.extname(stream.filename).toLocaleLowerCase();
       // md5加密文件 文件名+时间戳+随机数
