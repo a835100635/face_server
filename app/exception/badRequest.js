@@ -3,8 +3,8 @@
  */
 const HttpException = require('./base');
 class BadRequestException extends HttpException {
-  constructor(message = '参数错误', errCode = 400) {
-    super(errCode, message, null, 400);
+  constructor(message = '参数错误', errCode = -1) {
+    super(errCode, message, null, 200);
   }
 }
 module.exports = BadRequestException;

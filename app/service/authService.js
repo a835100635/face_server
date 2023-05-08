@@ -5,7 +5,7 @@ const { Service } = require('egg');
 const AuthenticationException = require('../exception/authenticationException');
 
 class AuthService extends Service {
-  verifyToken(token) {
+  async verifyToken(token) {
     const { ctx, app } = this;
     const { jwt, config } = app;
     if (!token) {
@@ -15,7 +15,11 @@ class AuthService extends Service {
       const jwtInfo = jwt.verify(token, config.jwt.secret);
       const { token: openid } = jwtInfo;
       // 从数据库中获取用户信息
-      const userInfo = ctx.service.user.user(openid);
+      const userInfo = await ctx.service.user.user(openid);
+      // 如果用户不存在，抛出异常
+      if (!userInfo) {
+        throw new AuthenticationException();
+      }
       return {
         openid,
         ...userInfo,

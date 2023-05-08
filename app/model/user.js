@@ -94,7 +94,7 @@ module.exports = app => {
 
   // 实现 新增用户时id自增长，且6位数，以 000001、000002这种格式存在
   user.beforeCreate((user, options) => {
-    return user.max('id').then(maxId => {
+    return app.model.User.max('id').then(maxId => {
       let newId = parseInt(maxId, 10) + 1;
       if (isNaN(newId)) {
         newId = 1;

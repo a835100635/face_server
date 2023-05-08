@@ -14,9 +14,16 @@ class UserController extends Controller {
   async login() {
     const { ctx, app } = this;
     const { code } = ctx.request.body;
+    // 获取 openid
     const info = await this.getInfoByCode(code);
     const { openid } = info;
-    console.log('openid', openid);
+    // 判断是否存在用户
+    const user = await ctx.service.user.user(openid);
+    // 不存在则创建用户
+    if (!user) {
+      await ctx.service.user.add(openid, {});
+    }
+    // 生成 token
     const jwtToken = ctx.app.jwt.sign(
       {
         token: openid,
@@ -64,7 +71,7 @@ class UserController extends Controller {
       const result = await ctx.service.user.update(openid, ctx.request.body);
       ctx.body = result;
     } else {
-      ctx.body = await ctx.service.user.add(openid, ctx.request.body);
+      throw new BadRequestException('用户不存在');
     }
   }
 

@@ -8,14 +8,23 @@ module.exports = function ResponseFormatMiddleware() {
       // next 上方是request
       await next();
       // next 下方是 response
-      const { status, message } = ctx.response;
-      const { data, message: bodyMessage, code } = ctx.body || {};
-      const is = data && message;
-      ctx.body = {
-        code: status === 200 ? 200 : (code || status),
-        data: data || (is ? data : ctx.body) || null,
-        message: status === 200 ? 'success' : (bodyMessage || message || '服务器异常'),
-      };
+
+      console.log('----ctx.body----', ctx.body);
+      const { isError } = ctx.body || {};
+
+      // 如果有返回数据，将返回数据添加到data中
+      if (isError) {
+        delete ctx.body.isError;
+        ctx.body = ctx.body;
+        return;
+      } else {
+        ctx.body = {
+          code: 200,
+          message: 'success',
+          data: ctx.body,
+        };
+      }
+
     } catch (error) {
       console.log(error);
       ctx.body = {

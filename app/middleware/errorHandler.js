@@ -19,12 +19,9 @@ module.exports = function ErrorHandler() {
 
       // 判断异常是不是自定义异常
       if (error instanceof HttpException) {
-        ctx.status = error.httpCode;
-        ctx.body = {
-          code: error.code,
-          message: error.message,
-          data: error.data,
-        };
+        const { code, message, data, isError } = error;
+        ctx.status = code === -1 ? 200 : code;
+        ctx.body = { code, message, data, isError };
         return;
       }
 

@@ -2,7 +2,7 @@
  * 用户服务
  */
 const { Service } = require('egg');
-const BadRequestException = require('../exception/badRequest');
+const ServiceErrorException = require('../exception/serviceError');
 
 class UserService extends Service {
   /**
@@ -50,7 +50,7 @@ class UserService extends Service {
       })
       return userData;
     } catch (error) {
-      throw new BadRequestException('更新用户信息失败');
+      throw new ServiceErrorException('更新用户信息失败');
     }
   }
 
@@ -70,7 +70,7 @@ class UserService extends Service {
       });
       return userData;
     } catch (error) {
-      throw new BadRequestException('添加用户信息失败');
+      throw new ServiceErrorException('添加用户信息失败');
     }
   }
 
@@ -98,7 +98,7 @@ class UserService extends Service {
       }
     } catch (error) {
       console.log(error);
-      throw new BadRequestException('获取用户积分日志失败');
+      throw new ServiceErrorException('获取用户积分日志失败');
     }
   }
 
@@ -120,7 +120,7 @@ class UserService extends Service {
       });
       return true;
     } catch (error) {
-      throw new BadRequestException('修改用户积分失败');
+      throw new ServiceErrorException('修改用户积分失败');
     }
   }
 
@@ -135,7 +135,8 @@ class UserService extends Service {
       });
       return true;
     } catch (error) {
-      throw new BadRequestException('记录用户积分失败');
+      console.log(error);
+      throw new ServiceErrorException('记录用户积分失败');
     }
   }
 

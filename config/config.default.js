@@ -32,7 +32,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1679032735880_6613';
 
   // add your middleware config here
-  config.middleware = [ 'log', 'responseFormat', 'errorHandler', 'authentication' ];
+  config.middleware = ['log', 'responseFormat', 'errorHandler', 'authentication'];
 
   // add your user config here
   const userConfig = {
@@ -67,10 +67,19 @@ module.exports = appInfo => {
     username: DB_USER, // 数据库用户名
     password: DB_PASSWORD, // 数据库密码
     timezone: '+08:00', // 更改为北京时区
+    logging: false, // 是否打印日志
     define: {
       // 表名是否和model的js文件名一致
       freezeTableName: false,
+      // 自动写入时间戳
+      timestamps: true,
+      // 所有驼峰命名格式化
       underscored: true,
+      //字段生成软删除时间戳  deleted_at
+      // paranoid: true,
+      // deletedAt: 'deleted_at',
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     },
     // operatorsAliases: {
     // 模糊搜索别名
@@ -100,7 +109,7 @@ module.exports = appInfo => {
       enable: false,
     },
     // 允许访问接口的白名单
-    domainWhiteList: [ '*' ],
+    domainWhiteList: ['*'],
   };
 
   return {
