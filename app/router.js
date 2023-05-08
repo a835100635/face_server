@@ -48,4 +48,9 @@ module.exports = app => {
   // 上传文件
   router.post(`${apiPrefix}/api/upload`, controller.uploadFiles.upload);
 
+  // 积分日志
+  router.get(`${apiPrefix}/api/scoreLog`, controller.user.scoreLogList);
+  // 获取积分
+  router.post(`${apiPrefix}/api/changeScore`, controller.user.changeScore);
+
 };

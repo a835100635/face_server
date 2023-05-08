@@ -74,6 +74,71 @@ class UserService extends Service {
     }
   }
 
+  /**
+   * 获取用户积分日志
+   * @param {*} openid 
+   * @param {*} pageNum 
+   * @param {*} pageSize 
+   * @returns 
+   */
+  scoreLogList(openid, pageNum, pageSize) {
+    const { ctx } = this;
+    try {
+      const scoreLogList = ctx.model.ScoreLog.findAndCountAll({
+        where: {
+          userId: openid,
+        },
+        limit: +pageSize,
+        offset: (+pageNum - 1) * +pageSize,
+      });
+      const { count = 0, rows = [] } = scoreLogList;
+      return {
+        total: count,
+        data: rows,
+      }
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('获取用户积分日志失败');
+    }
+  }
+
+  /**
+   * 修改用户积分 新增 扣除
+   * @param {*} data
+   * @return
+   */
+  changeScore(data) {
+    const { openid, score, type } = data
+    const { ctx } = this;
+    try {
+      ctx.model.User.update({
+        score: ctx.model.literal(`score ${type === 'add' ? '+' : '-'} ${score}`),
+      }, {
+        where: {
+          openid,
+        }
+      });
+      return true;
+    } catch (error) {
+      throw new BadRequestException('修改用户积分失败');
+    }
+  }
+
+  /**
+   * 记录用户积分
+   */
+  async addScoreLog(data) {
+    const { ctx } = this;
+    try {
+      await ctx.model.ScoreLog.create({
+        ...data,
+      });
+      return true;
+    } catch (error) {
+      throw new BadRequestException('记录用户积分失败');
+    }
+  }
+
 }
 
 module.exports = UserService;
