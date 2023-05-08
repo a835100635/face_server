@@ -10,13 +10,10 @@ module.exports = function LogMiddleware() {
   return async (ctx, next) => {
     const startTime = Date.now();
     const { method, url } = ctx.request;
-    let params = {};
     const body = JSON.stringify(ctx.request.body);
-    if (url.indexOf('?') !== -1) {
-      params = JSON.stringify(getRequestParams(url));
-      // 参数设置在request中
-      ctx.request.params = params;
-    }
+    const params = JSON.stringify(getRequestParams(url));
+    // 参数设置在request中
+    ctx.request.params = params;
     // 请求日志
     ctx.logger.info(`[request][${method}][${url}] body: ${body}, params: ${params}`);
     await next();
