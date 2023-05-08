@@ -9,14 +9,19 @@ module.exports = function ResponseFormatMiddleware() {
       await next();
       // next 下方是 response
 
-      if (ctx.body) {
+      console.log('----ctx.body----', ctx.body);
+      const { isError } = ctx.body || {};
+
+      // 如果有返回数据，将返回数据添加到data中
+      if (isError) {
+        delete ctx.body.isError;
         ctx.body = ctx.body;
         return;
       } else {
         ctx.body = {
           code: 200,
           message: 'success',
-          data: null,
+          data: ctx.body,
         };
       }
 

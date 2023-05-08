@@ -14,15 +14,14 @@ module.exports = function ErrorHandler() {
     try {
       await next();
     } catch (error) {
-      console.log('---', error);
       // 所有的异常都在 app 上触发一个 error 事件，框架会记录一条错误日志
       ctx.app.emit('error', error, ctx);
 
       // 判断异常是不是自定义异常
       if (error instanceof HttpException) {
-        const { code, message, data } = error;
+        const { code, message, data, isError } = error;
         ctx.status = code === -1 ? 200 : code;
-        ctx.body = { code, message, data };
+        ctx.body = { code, message, data, isError };
         return;
       }
 

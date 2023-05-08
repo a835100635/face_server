@@ -23,7 +23,6 @@ module.exports = function AuthenticationMiddleware() {
       await next();
     } else {
       if (!token || !productName || productName !== 'Face') {
-        ctx.status = 401;
         throw new AuthenticationException();
       }
       try {
@@ -31,7 +30,6 @@ module.exports = function AuthenticationMiddleware() {
         const userInfo = await ctx.service.authService.verifyToken(token);
         ctx.state.userInfo = userInfo;
       } catch (error) {
-        ctx.status = 401;
         throw new AuthenticationException();
       }
       await next();

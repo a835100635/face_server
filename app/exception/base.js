@@ -9,6 +9,7 @@ class HttpException extends Error {
     this.message = message; // 自定义返回消息
     this.data = data; // 自定义返回数据
     this.httpCode = httpCode; // http状态码
+    this.isError = true; // 标识是异常
   }
 }
 module.exports = HttpException;

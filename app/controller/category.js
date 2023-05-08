@@ -13,7 +13,7 @@ class CategoryController extends Controller {
   async add() {
     const { ctx } = this;
     const { typeId, categoryName } = ctx.request.body;
-    if (!([ 'string', 'number' ].includes(typeof typeId)) && !categoryName) {
+    if (!(['string', 'number'].includes(typeof typeId)) && !categoryName) {
       throw new BadRequestException('参数错误');
     }
     // 判断名称是否重复
@@ -40,7 +40,7 @@ class CategoryController extends Controller {
       throw new BadRequestException(`“${categoryId}” 分类不存在`);
     }
     await ctx.service.category.delete(categoryId);
-    ctx.body = '';
+    ctx.body = null;
   }
 
   /**
@@ -49,7 +49,7 @@ class CategoryController extends Controller {
   async update() {
     const { ctx } = this;
     const { typeId, categoryName, id } = ctx.request.body;
-    if (!categoryName || !id || !([ 'string', 'number' ].includes(typeof typeId))) {
+    if (!categoryName || !id || !(['string', 'number'].includes(typeof typeId))) {
       throw new BadRequestException('id 与 typeId、categoryName必传');
     }
     const category = await ctx.service.category.checkCategory({ value: id });
