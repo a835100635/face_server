@@ -88,7 +88,40 @@ class UserController extends Controller {
 
     return { openid, sessionKey };
   }
-}
 
+  /**
+   * 积分日志
+   * @return
+   */
+  async scoreLogList() {
+    const { ctx } = this;
+    const { openid } = ctx.state.userInfo;
+    const { pageNum = 1, pageSize = 20 } = ctx.query;
+    const result = await ctx.service.user.scoreLogList(openid, pageNum, pageSize);
+    ctx.body = result;
+  }
+
+  /**
+   * 修改积分
+   */
+  async changeScore() {
+    const { ctx } = this;
+    const { openid } = ctx.state.userInfo;
+
+    // 操作类型 根据操作类型定义积分加减
+    const { operationType = 'SIGN_IN' } = ctx.request.body;
+    // TODO: 暂时只有加分
+    const type = 'add';
+    // TODO: 暂时10分
+    const score = 10;
+    // TODO: 暂时1倍
+    const rate = 1.5;
+    // 修改积分
+    await ctx.service.user.changeScore({ openid, score: score * rate, type });
+    // 添加积分日志
+    await ctx.service.user.addScoreLog({ userId: openid, change: score * rate, type, rate, source: operationType });
+    ctx.body = '';
+  }
+}
 
 module.exports = UserController;
