@@ -2,6 +2,7 @@
  * 积分操作类型
  * @param { Egg } app egg实例
  */
+const { SCORE_LOG_TYPES } = require('../../constants/index');
 
 module.exports = app => {
   const { STRING, INTEGER, DataTypes } = app.Sequelize;
@@ -27,6 +28,22 @@ module.exports = app => {
     freezeTableName: true,
     // timestamps默认值是true，如实是true会自动添加上 create_time 和update_time两个字段
     timestamps: false,
+  });
+
+  //创建表的时候，会调用 afterSync 钩子函数
+  scoreType.afterSync(() => {
+    // 设置默认积分类型
+    for (const key in SCORE_LOG_TYPES) {
+      app.model.ScoreType.findOrCreate({
+        where: {
+          type: key,
+        },
+        defaults: {
+          type: key,
+          score: SCORE_LOG_TYPES[key],
+        }
+      });
+    };
   });
 
   return scoreType;

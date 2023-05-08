@@ -9,7 +9,6 @@ module.exports = function ResponseFormatMiddleware() {
       await next();
       // next 下方是 response
 
-      console.log('----ctx.body----', ctx.body);
       const { isError } = ctx.body || {};
 
       // 如果有返回数据，将返回数据添加到data中

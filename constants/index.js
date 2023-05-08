@@ -19,23 +19,15 @@ module.exports = {
     DISLIKE: 'DISLIKE', // 点踩
   },
   // 积分日志类型
-  // SCORE_LOG_TYPES: {
-  //   // 签到
-  //   SIGN_IN: 'SIGN_IN',
-  //   // 点赞
-  //   // LIKE: 'LIKE',
-  //   // 点踩
-  //   // DISLIKE: 'DISLIKE',
-  //   // 发表评论
-  //   COMMENT: 'COMMENT',
-  //   // 发表题目
-  //   TOPIC: 'TOPIC',
-  //   // 发表回复
-  //   REPLY: 'REPLY',
-  //   // 上传资源
-  //   UPLOAD: 'UPLOAD',
-  //   // 考试
-  //   TEST: 'TEST',
-  // },
+  SCORE_LOG_TYPES: {
+    // 签到
+    SIGN_IN: 1,
+    // 发表题目
+    TOPIC: 2,
+    // 上传资源
+    UPLOAD: 2,
+    // 考试
+    TEST: 1,
+  },
 
 };
