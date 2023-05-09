@@ -105,5 +105,30 @@ module.exports = app => {
     });
   });
 
+  // 创建表的时候，会调用 afterSync 钩子函数
+  user.afterSync(() => {
+    // 创建默认管理员
+    return app.model.User.findOrCreate({
+      where: {
+        openid: process.env.ADMIN_DEFAULT_OPENID,
+      },
+      defaults: {
+        id: '000001',
+        openid: process.env.ADMIN_DEFAULT_OPENID,
+        userName: 'admin',
+        nickName: '管理员',
+        slogan: '这个人很懒，什么都没有留下',
+        score: 0,
+        avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKiaibQicicZ3ib1ibibi',
+        customAvatarUrl: '',
+        gender: 1,
+        country: '中国',
+        province: '广东',
+        city: '广州',
+        language: 'zh_CN',
+      }
+    });
+  });
+
   return user;
 };
