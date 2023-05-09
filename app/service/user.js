@@ -3,6 +3,7 @@
  */
 const { Service } = require('egg');
 const ServiceErrorException = require('../exception/serviceError');
+const { Op } = require('sequelize');
 
 class UserService extends Service {
   /**
@@ -81,20 +82,62 @@ class UserService extends Service {
    * @param {*} pageSize 
    * @returns 
    */
-  scoreLogList(openid, pageNum, pageSize) {
+  async scoreLogList(openid, pageNum, pageSize) {
     const { ctx } = this;
     try {
-      const scoreLogList = ctx.model.ScoreLog.findAndCountAll({
+      const scoreLogList = await ctx.model.ScoreLog.findAndCountAll({
         where: {
           userId: openid,
         },
+        // 忽略返回的字段
+        attributes: {
+          exclude: ['userId'],
+        },
+        // 时间最新的在上面 
+        order: [
+          ['createdTime', 'DESC'],
+        ],
         limit: +pageSize,
         offset: (+pageNum - 1) * +pageSize,
       });
       const { count = 0, rows = [] } = scoreLogList;
+      // 获取用户信息
+      const user = await ctx.model.User.findOne({
+        where: {
+          openid,
+        },
+      });
+      // 获取今天的积分
+      const todayScore = await ctx.model.ScoreLog.sum('change', {
+        where: {
+          userId: openid,
+          createdTime: {
+            [Op.gte]: new Date(new Date().toLocaleDateString()).getTime(),
+          }
+        }
+      });
+      // 获取昨天的积分
+      const yesterdayScore = await ctx.model.ScoreLog.sum('change', {
+        where: {
+          userId: openid,
+          createdTime: {
+            [Op.gte]: new Date(new Date().toLocaleDateString()).getTime() - 24 * 60 * 60 * 1000,
+            [Op.lte]: new Date(new Date().toLocaleDateString()).getTime(),
+          }
+        }
+      });
+
       return {
         total: count,
         data: rows,
+        pageNum,
+        pageSize,
+        // 用户总积分
+        totalScore: user.score,
+        // 昨天积分
+        yesterdayScore: yesterdayScore || 0,
+        // 今天积分
+        todayScore: todayScore || 0,
       }
     } catch (error) {
       console.log(error);
