@@ -21,13 +21,29 @@ module.exports = {
   // 积分日志类型
   SCORE_LOG_TYPES: {
     // 签到
-    SIGN_IN: 1,
+    SIGN_IN: {
+      label: '签到',
+      rate: 1,
+      score: 1
+    },
     // 发表题目
-    TOPIC: 2,
+    TOPIC: {
+      label: '发表题目',
+      rate: 1,
+      score: 2
+    },
     // 上传资源
-    UPLOAD: 2,
+    UPLOAD: {
+      label: '上传资源',
+      rate: 1,
+      score: 2
+    },
     // 考试
-    TEST: 1,
+    TEST: {
+      label: '考试',
+      rate: 1,
+      score: 1
+    },
   },
 
 };

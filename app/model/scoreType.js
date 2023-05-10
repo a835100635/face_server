@@ -14,6 +14,8 @@ module.exports = app => {
       primaryKey: true,
       notNull: true
     },
+    // 积分类型名称
+    label: STRING(20),
     // 积分类型
     type: STRING(),
     // 积分
@@ -40,7 +42,7 @@ module.exports = app => {
         },
         defaults: {
           type: key,
-          score: SCORE_LOG_TYPES[key],
+          ...SCORE_LOG_TYPES[key]
         }
       });
     };

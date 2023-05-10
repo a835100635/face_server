@@ -155,12 +155,10 @@ class TopicService extends Service {
     });
     const { count, rows } = result;
     return {
-      data: {
-        total: count,
-        data: rows,
-        pageNum,
-        pageSize,
-      },
+      total: count,
+      data: rows,
+      pageNum,
+      pageSize,
     };
   }
 

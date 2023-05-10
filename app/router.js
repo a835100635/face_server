@@ -48,9 +48,17 @@ module.exports = app => {
   // 上传文件
   router.post(`${apiPrefix}/api/upload`, controller.uploadFiles.upload);
 
-  // 积分日志
+  // 个人积分日志
   router.get(`${apiPrefix}/api/scoreLog`, controller.user.scoreLogList);
   // 获取积分
   router.post(`${apiPrefix}/api/changeScore`, controller.user.changeScore);
+  // 积分类型列表
+  router.get(`${apiPrefix}/api/integrationType/list`, controller.integrationType.index);
+  // 积分类型添加
+  router.post(`${apiPrefix}/api/integrationType/add`, controller.integrationType.add);
+  // 积分类型更新
+  router.post(`${apiPrefix}/api/integrationType/update`, controller.integrationType.update);
+  // 积分类型删除
+  router.post(`${apiPrefix}/api/integrationType/delete`, controller.integrationType.delete);
 
 };
