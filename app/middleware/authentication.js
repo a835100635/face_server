@@ -5,6 +5,17 @@ const AuthenticationException = require('../exception/authenticationException');
 
 module.exports = function AuthenticationMiddleware() {
   return async (ctx, next) => {
+    const { ADMIN_DEFAULT_OPENID, NODE_ENV } = process.env;
+    console.log('===NODE_ENV===>', NODE_ENV)
+    // 开发环境跳过
+    if (NODE_ENV === 'development') {
+      ctx.state.userInfo = {
+        openId: ADMIN_DEFAULT_OPENID,
+      }
+      await next();
+      return;
+    }
+
     const { app: { config: { apiPrefix, tokenField } }, request } = ctx;
     // 从请求头中获取 token
     const token = ctx.request.header[tokenField.toLowerCase()];

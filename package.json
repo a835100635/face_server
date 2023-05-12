@@ -30,7 +30,8 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-face_server",
     "stop": "egg-scripts stop --title=egg-server-face_server",
-    "dev": "egg-bin dev",
+    "dev:d": "NODE_ENV=development egg-bin dev",
+    "dev:p": "NODE_ENV=production egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",

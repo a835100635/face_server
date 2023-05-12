@@ -8,7 +8,11 @@ module.exports = function ResponseFormatMiddleware() {
       // next 上方是request
       await next();
       // next 下方是 response
-
+      const { status } = ctx.response;
+      if (status === 404) {
+        ctx.status = 404;
+        return;
+      }
       const { isError } = ctx.body || {};
 
       // 如果有返回数据，将返回数据添加到data中

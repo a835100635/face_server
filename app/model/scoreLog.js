@@ -6,7 +6,7 @@
 const User = require('./user');
 
 module.exports = app => {
-  const { STRING, INTEGER, DataTypes } = app.Sequelize;
+  const { STRING, INTEGER, DataTypes, DATE, NOW } = app.Sequelize;
   const scoreLog = app.model.define('ScoreLog', {
     // 积分日志id
     id: {
@@ -27,12 +27,18 @@ module.exports = app => {
     rate: {
       type: DataTypes.FLOAT,
       defaultValue: 1,
+    },
+    // 创建时间
+    createdTime: {
+      type: DATE,
+      allowNull: false,
+      defaultValue: NOW,
     }
   }, {
     // freezeTableName默认值是 false 如果是false的话，会自动在表名后加s复数
     freezeTableName: true,
     // timestamps默认值是true，如实是true会自动添加上 create_time 和update_time两个字段
-    timestamps: true,
+    timestamps: false,
   });
   scoreLog.options.modelDependencies = [User];
 
