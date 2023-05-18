@@ -24,6 +24,21 @@ class UploadFilesController extends Controller {
       throw new BadRequestException('文件不存在');
     }
   }
+
+  async delete() {
+    const { ctx } = this;
+    const { path } = ctx.request.body;
+    if (!path) {
+      throw new BadRequestException('文件名不存在');
+    }
+    const result = await ctx.service.uploadFiles.deleteFile(path);
+    if (result) {
+      ctx.body = {};
+    } else {
+      throw new BadRequestException('删除失败');
+    }
+
+  }
 }
 
 

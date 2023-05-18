@@ -111,9 +111,13 @@ class UploadFilesService extends Service {
    */
   async deleteFile(filename) {
     const bucketManager = new qiniu.rs.BucketManager(mac, config);
+    let path = filename;
+    if(path.startsWith('/')) {
+      path = path.substring(1);
+    }
     try {
       const result = await new Promise((resolve, reject) => {
-        bucketManager.delete(bucket, filename, (err, respBody, respInfo) => {
+        bucketManager.delete(bucket, path, (err, respBody, respInfo) => {
           if (err) {
             throw err;
           }

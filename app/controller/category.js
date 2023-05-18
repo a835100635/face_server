@@ -4,7 +4,6 @@
 
 const { Controller } = require('egg');
 const BadRequestException = require('../exception/badRequest');
-// const NotFoundException = require('../exception/notFoundException');
 
 class CategoryController extends Controller {
   /**
@@ -40,7 +39,7 @@ class CategoryController extends Controller {
       throw new BadRequestException(`“${categoryId}” 分类不存在`);
     }
     await ctx.service.category.delete(categoryId);
-    ctx.body = null;
+    ctx.body = {};
   }
 
   /**
@@ -68,8 +67,11 @@ class CategoryController extends Controller {
    */
   async category() {
     const { ctx } = this;
-    const result = await ctx.service.category.category();
+    const { typeId, exclude } = ctx.query;
+    const excludeIds = exclude && (JSON.parse(exclude) || '[]');
+    const result = await ctx.service.category.category(typeId, excludeIds);
     const categoryMap = {};
+
     result.forEach(c => {
       if (!categoryMap[`${c.typeId}`]) {
         categoryMap[`${c.typeId}`] = [];

@@ -9,8 +9,9 @@ module.exports = function ResponseFormatMiddleware() {
       await next();
       // next 下方是 response
       const { status } = ctx.response;
-      if (status === 404) {
-        ctx.status = 404;
+      if (status !== 200) {
+        ctx.status = status;
+        ctx.body = ctx.body;
         return;
       }
       const { isError } = ctx.body || {};

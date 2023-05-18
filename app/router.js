@@ -47,6 +47,8 @@ module.exports = app => {
 
   // 上传文件
   router.post(`${apiPrefix}/api/upload`, controller.uploadFiles.upload);
+  // 删除文件
+  router.post(`${apiPrefix}/api/common/deleteFile`, controller.uploadFiles.delete);
 
   // 个人积分日志
   router.get(`${apiPrefix}/api/scoreLog`, controller.user.scoreLogList);

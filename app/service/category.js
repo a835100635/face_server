@@ -67,15 +67,30 @@ class CategoryService extends Service {
 
   /**
    * 获取分类
+   * @param { String } typeId 分类类型
+   * @param { Array } exclude 排除的分类
    */
-  async category() {
+  async category(typeId = '', exclude) {
     const { ctx, app } = this;
     const { Category, Topic } = ctx.model;
+    const where = {};
+    const attributes = [ 'id', 'typeId', 'categoryName', 'desc',];
+    // 如果有排除的分类 则排除
+    if(exclude && exclude.length) {
+      where.typeId = {
+        [app.Sequelize.Op.notIn]: exclude,
+      };
+    }
+    // 如果有分类类型 则查询该类型下的分类
+    if (typeId) {
+      where.typeId = typeId;
+    } else {
+      // 查询关联表的数量 
+      attributes.push([app.Sequelize.literal(`(SELECT COUNT(*) FROM Topic WHERE \`Topic\`.\`category_id\`  = \`Category\`.\`id\`)`), 'topicCount']);
+    }
     const result = await Category.findAll({
-      attributes: [ 'id', 'typeId', 'categoryName', 'desc',
-        // 查询关联表的数量 
-        [app.Sequelize.literal(`(SELECT COUNT(*) FROM Topic WHERE \`Topic\`.\`category_id\`  = \`Category\`.\`id\`)`), 'topicCount']
-      ],
+      where,
+      attributes,
       include: [
         {
           model: Topic,
