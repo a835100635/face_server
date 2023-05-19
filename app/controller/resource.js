@@ -30,6 +30,35 @@ class ResourceController extends Controller {
     const result = await ctx.service.resource.list(params);
     ctx.body = result;
   }
+
+  /**
+   * 资源详情
+   */
+  async detail() {
+    const { ctx } = this;
+    const { resourceId } = ctx.params;
+    if(!resourceId) {
+      throw new BadRequestException('资源id必传');
+    }
+    const result = await ctx.service.resource.detail(resourceId);
+    ctx.body = result;
+  }
+
+  /**
+   * 资源更新
+   */
+  async update() {
+    const { ctx } = this;
+    const body = ctx.request.body;
+    const { id } = body;
+    body.userId = ctx.state.userInfo.openId;
+    if(!id) {
+      throw new BadRequestException('资源id必传');
+    }
+    verifyData(body, ctx);
+    await ctx.service.resource.update(id, body);
+    ctx.body = {};
+  }
 }
 
 /**

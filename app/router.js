@@ -67,5 +67,9 @@ module.exports = app => {
   router.post(`${apiPrefix}/api/resource`, controller.resource.add);
   // 资源列表
   router.get(`${apiPrefix}/api/resource`, controller.resource.list);
+  // 资源详情
+  router.get(`${apiPrefix}/api/resource/:resourceId`, controller.resource.detail);
+  // 资源更新
+  router.post(`${apiPrefix}/api/resource/update`, controller.resource.update);
 
 };

@@ -56,6 +56,38 @@ class ResourceService extends Service {
       pageSize,
     };
   }
+
+  /**
+   * 详情
+   */
+  async detail(id) {
+    const { ctx } = this;
+    const result = await ctx.model.Resource.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!result) {
+      throw new ServiceError('资源不存在');
+    }
+    return result;
+  }
+
+  /**
+   * 更新
+   */
+  async update(id, body) {
+    const { ctx } = this;
+    const result = await ctx.model.Resource.update(body, {
+      where: {
+        id,
+      },
+    });
+    if (!result) {
+      throw new ServiceError('资源更新失败');
+    }
+    return {};
+  }
 }
 
 module.exports = ResourceService;
