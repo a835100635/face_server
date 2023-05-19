@@ -3,7 +3,7 @@
  * @param { Egg } app egg实例
  */
 module.exports = app => {
-  const { STRING, INTEGER, NOW, DATE } = app.Sequelize;
+  const { STRING, INTEGER, NOW, DATE, DataTypes, TEXT } = app.Sequelize;
   const Resource = app.model.define('Resource', {
     id: {
       type: INTEGER,
@@ -13,7 +13,7 @@ module.exports = app => {
     // 资源名称
     title: STRING,
     // 资源描述
-    desc: STRING,
+    desc: TEXT('long'),
     // 资源地址
     resourceUrl: STRING,
     // 资源密码

@@ -63,4 +63,9 @@ module.exports = app => {
   // 积分类型删除
   router.post(`${apiPrefix}/api/integrationType/delete`, controller.integrationType.delete);
 
+  // 新增资源
+  router.post(`${apiPrefix}/api/resource`, controller.resource.add);
+  // 资源列表
+  router.get(`${apiPrefix}/api/resource`, controller.resource.list);
+
 };
