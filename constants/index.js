@@ -45,5 +45,82 @@ module.exports = {
       score: 1
     },
   },
-
+  // 分类类型
+  CATEGORY_TYPES: {
+    // 前端
+    FRONT_END: {
+      label: '前端',
+      value: 1,
+    },
+    // 后端
+    BACK_END: {
+      label: '后端',
+      value: 2,
+    },
+    // 测试
+    TEST: {
+      label: '测试',
+      value: 3,
+    },
+    // 数据库
+    DATABASE: {
+      label: '数据库',
+      value: 4,
+    },
+    // 云计算
+    CLOUD_COMPUTING: {
+      label: '云计算',
+      value: 5,
+    },
+    // 运维
+    OPERATION_AND_MAINTENANCE: {
+      label: '运维',
+      value: 6,
+    },
+    // 大数据
+    BIG_DATA: {
+      label: '大数据',
+      value: 7,
+    },
+    // 人工智能
+    ARTIFICIAL_INTELLIGENCE: {
+      label: '人工智能',
+      value: 8,
+    },
+    // 区块链
+    BLOCK_CHAIN: {
+      label: '区块链',
+      value: 9,
+    },
+    // 物联网
+    INTERNET_OF_THINGS: {
+      label: '物联网',
+      value: 10,
+    },
+    // 游戏开发
+    GAME_DEVELOPMENT: {
+      label: '游戏开发',
+      value: 11,
+    },
+    // 安全
+    SECURITY: {
+      label: '安全',
+      value: 12,
+    },
+    // 资源
+    RESOURCE: {
+      label: '资源',
+      value: 13,
+    },
+    // 资讯
+    INFORMATION: {
+      label: '资讯',
+      value: 14,
+    },
+    // 其他
+    OTHER: {
+      label: '其他',
+      value: -1,
+    },
+  }
 };

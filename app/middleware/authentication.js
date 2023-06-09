@@ -6,7 +6,7 @@ const AuthenticationException = require('../exception/authenticationException');
 module.exports = function AuthenticationMiddleware() {
   return async (ctx, next) => {
     const { ADMIN_DEFAULT_OPENID, NODE_ENV } = process.env;
-    console.log('===NODE_ENV===>', NODE_ENV)
+    console.log('===NODE_ENV===>', NODE_ENV, ADMIN_DEFAULT_OPENID)
     // 开发环境跳过
     if (NODE_ENV === 'development') {
       ctx.state.userInfo = {

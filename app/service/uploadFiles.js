@@ -69,7 +69,7 @@ class UploadFilesService extends Service {
       });
 
       return {
-        url: result.key
+        url: `/${result.key}`
       };
     } catch (error) {
       throw new BadRequestException('上传失败: ' + error.error);
@@ -86,8 +86,12 @@ class UploadFilesService extends Service {
   async moveFile(filename, target) {
     const bucketManager = new qiniu.rs.BucketManager(mac, config);
     try {
+      let path = filename;
+      if(path.startsWith('/')) {
+        path = path.substring(1);
+      }
       const result = await new Promise((resolve, reject) => {
-        bucketManager.move(bucket, filename, bucket, target, options, (err, respBody, respInfo) => {
+        bucketManager.move(bucket, path, bucket, target, options, (err, respBody, respInfo) => {
           if (err) {
             throw err;
           }
@@ -111,9 +115,13 @@ class UploadFilesService extends Service {
    */
   async deleteFile(filename) {
     const bucketManager = new qiniu.rs.BucketManager(mac, config);
+    let path = filename;
+    if(path.startsWith('/')) {
+      path = path.substring(1);
+    }
     try {
       const result = await new Promise((resolve, reject) => {
-        bucketManager.delete(bucket, filename, (err, respBody, respInfo) => {
+        bucketManager.delete(bucket, path, (err, respBody, respInfo) => {
           if (err) {
             throw err;
           }

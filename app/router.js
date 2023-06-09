@@ -47,6 +47,8 @@ module.exports = app => {
 
   // 上传文件
   router.post(`${apiPrefix}/api/upload`, controller.uploadFiles.upload);
+  // 删除文件
+  router.post(`${apiPrefix}/api/common/deleteFile`, controller.uploadFiles.delete);
 
   // 个人积分日志
   router.get(`${apiPrefix}/api/scoreLog`, controller.user.scoreLogList);
@@ -60,5 +62,14 @@ module.exports = app => {
   router.post(`${apiPrefix}/api/integrationType/update`, controller.integrationType.update);
   // 积分类型删除
   router.post(`${apiPrefix}/api/integrationType/delete`, controller.integrationType.delete);
+
+  // 新增资源
+  router.post(`${apiPrefix}/api/resource`, controller.resource.add);
+  // 资源列表
+  router.get(`${apiPrefix}/api/resource`, controller.resource.list);
+  // 资源详情
+  router.get(`${apiPrefix}/api/resource/:resourceId`, controller.resource.detail);
+  // 资源更新
+  router.post(`${apiPrefix}/api/resource/update`, controller.resource.update);
 
 };

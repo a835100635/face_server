@@ -1,6 +1,5 @@
 /**
- *
- * 分类
+ * 分类 前端、后端、测试、数据库、云计算、运维、大数据、人工智能、区块链、物联网、游戏开发、安全、其他
  * @param { Egg } app egg实例
  */
 module.exports = app => {
@@ -12,7 +11,7 @@ module.exports = app => {
       autoIncrement: true,
       primaryKey: true,
     },
-    // 大类型 前端 后端。。。
+    // 大类型 前端、后端、测试、数据库、云计算、运维、大数据、人工智能、区块链、物联网、游戏开发、安全、其他
     typeId: INTEGER,
     // 分类名称
     categoryName: STRING,
