@@ -88,6 +88,20 @@ class ResourceService extends Service {
     }
     return {};
   }
+
+  /**
+   * 返回当前分类下的资源列表数量
+   */
+  async countByCategory(categoryId) {
+    const { ctx } = this;
+    const result = await ctx.model.Resource.count({
+      where: {
+        categoryId,
+      },
+    });
+    return result;
+  }
+
 }
 
 module.exports = ResourceService;

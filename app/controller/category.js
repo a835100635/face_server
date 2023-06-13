@@ -4,6 +4,7 @@
 
 const { Controller } = require('egg');
 const BadRequestException = require('../exception/badRequest');
+const { CATEGORY_TYPES } = require('../../constants/index');
 
 class CategoryController extends Controller {
   /**
@@ -38,6 +39,16 @@ class CategoryController extends Controller {
     if (!category) {
       throw new BadRequestException(`“${categoryId}” 分类不存在`);
     }
+    // 判断是否有关联
+    const { typeId } = category;
+    // 资源
+    if(typeId === CATEGORY_TYPES.RESOURCE.value) {
+      const resourceCount = await ctx.service.resource.countByCategory(categoryId);
+      if (resourceCount) {
+        throw new BadRequestException(`“${category.categoryName}”分类下有资源，不能删除`);
+      }
+    }
+
     await ctx.service.category.delete(categoryId);
     ctx.body = {};
   }
