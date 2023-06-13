@@ -2,6 +2,9 @@
  * 资源管理
  * @param { Egg } app egg实例
  */
+
+const category = require('./category');
+
 module.exports = app => {
   const { STRING, INTEGER, NOW, DATE, DataTypes, TEXT } = app.Sequelize;
   const Resource = app.model.define('Resource', {
@@ -52,5 +55,17 @@ module.exports = app => {
     // timestamps默认值是true，如实是true会自动添加上 create_time 和update_time两个字段
     timestamps: false,
   });
+
+  Resource.options.modelDependencies = [ category ];
+  Resource.associate = () => {
+    // 一个文件只能属于一个分类
+    app.model.Category.hasMany(app.model.Resource,
+      { foreignKey: 'categoryId', sourceKey: 'id' }
+    );
+    app.model.Resource.belongsTo(app.model.Category,
+      { foreignKey: 'categoryId', targetKey: 'id' }
+    );
+  };
+
   return Resource;
 };
