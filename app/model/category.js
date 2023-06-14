@@ -15,6 +15,8 @@ module.exports = app => {
     typeId: INTEGER,
     // 分类名称
     categoryName: STRING,
+    // 分类图标
+    icon: STRING,
     // 描述
     desc: STRING,
   }, {

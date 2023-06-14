@@ -74,7 +74,7 @@ class CategoryService extends Service {
     const { ctx, app } = this;
     const { Category, Topic } = ctx.model;
     const where = {};
-    const attributes = [ 'id', 'typeId', 'categoryName', 'desc',];
+    const attributes = [ 'id', 'typeId', 'icon', 'categoryName', 'desc',];
     // 如果有排除的分类 则排除
     if(exclude && exclude.length) {
       where.typeId = {
