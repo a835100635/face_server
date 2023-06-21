@@ -3,7 +3,7 @@
  * @param { Egg } app egg实例
  */
 
-const category = require('./category');
+const Category = require('./category');
 
 module.exports = app => {
   const { STRING, INTEGER, NOW, DATE, DataTypes, TEXT } = app.Sequelize;
@@ -56,9 +56,9 @@ module.exports = app => {
     timestamps: false,
   });
 
-  Resource.options.modelDependencies = [ category ];
+  Resource.options.modelDependencies = [ Category ];
   Resource.associate = () => {
-    // 一个文件只能属于一个分类
+    // 一个资源只能属于一个分类
     app.model.Category.hasMany(app.model.Resource,
       { foreignKey: 'categoryId', sourceKey: 'id' }
     );

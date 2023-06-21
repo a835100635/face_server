@@ -11,7 +11,7 @@ class TopicController extends Controller {
   async add() {
     const { ctx } = this;
     verifyTopicData(ctx.request.body, ctx);
-    let { categoryId, topic, level, type, answer, options, correct, desc } = ctx.request.body;
+    let { categoryId, topic, topicDesc,  level, type, answer, options, correct, desc } = ctx.request.body;
     const topicData = await ctx.service.topic.checkTopic({ value: topic, filed: 'topic' });
     if (topicData) {
       throw new BadRequestException('题目已存在');
@@ -21,7 +21,7 @@ class TopicController extends Controller {
       throw new BadRequestException('分类不存在');
     }
     const result = await ctx.service.topic.add({
-      categoryId, topic, level, type, answer, options, correct, desc,
+      categoryId, topic, topicDesc, level, type, answer, options, correct, desc,
       createUser: ctx.state.userInfo.openid,
       online: 0,
       status: 0,
@@ -49,7 +49,7 @@ class TopicController extends Controller {
    */
   async update() {
     const { ctx } = this;
-    let { id, categoryId, topic, level, type, answer, options, correct, desc } = ctx.request.body;
+    let { id, categoryId, topic, topicDesc, level, type, answer, options, correct, desc } = ctx.request.body;
     if (!id) {
       throw new BadRequestException('题目id必传');
     }
@@ -59,7 +59,7 @@ class TopicController extends Controller {
     }
     verifyTopicData(ctx.request.body, ctx);
     const result = await ctx.service.topic.update({
-      id, categoryId, topic, level, type, answer, options, correct, desc,
+      id, categoryId, topic, level, type, answer, options, correct, desc, topicDesc
     });
     if (!result.length) {
       throw new BadRequestException('更新失败');
@@ -89,7 +89,7 @@ class TopicController extends Controller {
   async list() {
     const { ctx } = this;
     const { categoryId, pageNum = 1, pageSize = 10 } = ctx.query;
-    const field = [ 'categoryId', 'topic', 'level', 'type', 'answer', 'online', 'status',
+    const field = [ 'categoryId', 'topic', 'topicDesc', 'level', 'type', 'answer', 'online', 'status',
       'createUser', 'updatedTime', 'pageNum', 'pageSize', 'startTime', 'endTime', 'detail' ];
     const keys = Object.keys(ctx.query);
     keys.forEach(key => {
@@ -103,7 +103,7 @@ class TopicController extends Controller {
         throw new BadRequestException('分类不存在');
       }
     }
-    const isKey = [ 'categoryId', 'topic', 'level', 'type', 'answer', 'online', 'status', 'createUser', 'updatedTime', 'startTime', 'endTime', 'detail' ];
+    const isKey = [ 'categoryId', 'topic', 'topicDesc', 'level', 'type', 'answer', 'online', 'status', 'createUser', 'updatedTime', 'startTime', 'endTime', 'detail' ];
     const condition = isKey.reduce((pre, item) => {
       if (ctx.query[item]) pre[item] = ctx.query[item];
       return pre;
@@ -131,10 +131,11 @@ function verifyTopicData(topicData, ctx) {
   if (![1,2,3,4,5].includes(level)) {
     throw new BadRequestException('level值为1-5整数区间');
   }
-  if (![1,2,3,4].includes(type)) {
+  if (![1,2,3,4,5].includes(type)) {
     throw new BadRequestException('type类型不准确');
   }
 }
 
 
 module.exports = TopicController;
+

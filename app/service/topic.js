@@ -54,24 +54,38 @@ class TopicService extends Service {
     const sequelize = app.Sequelize;
     const { literal } = sequelize;
     const { READ, TEST, ALL } = CHECK_TYPE;
-    const publicAttr = ['id', 'categoryId', 'topic', 'level'];
+    const { openid } = ctx.state.userInfo;
+    const { LIKE, DISLIKE } = LIKE_STATUS;
+    const publicAttr = ['id', 'categoryId', 'topic', 'topicDesc', 'level'];
     const attributesMap = {
+      // 阅读模式  需要选项
       [`${READ}`]: publicAttr.concat(['answer']),
-      [`${TEST}`]: publicAttr.concat(['options', 'type', 'correct']),
+      // 考试模式 不需要解析
+      [`${TEST}`]: publicAttr.concat(['options', 'type']),
     };
     const attributes = checkType == ALL ? [].concat(attributesMap[READ], attributesMap[TEST]) : attributesMap[checkType];
     const result = await ctx.model.Topic.findOne({
       attributes: [
         ...attributes,
         // literal 可加入自定义sql
-        // 查询点赞数量
-        [literal(`(select count(status) from LikeStatus where status = '${LIKE_STATUS.LIKE}')`), 'likeCount'],
-        // 查询点踩数量
-        [literal(`(select count(status) from LikeStatus where status = '${LIKE_STATUS.DISLIKE}')`), 'dislikeCount'],
-        // 查询是否点赞
-        [literal(`(select status from LikeStatus where status = '${LIKE_STATUS.LIKE}' and user_id = '${ctx.state.userInfo.openid}')`), 'isLike'],
-        // 查询是否点踩
-        [literal(`(select status from LikeStatus where status = '${LIKE_STATUS.DISLIKE}' and user_id = '${ctx.state.userInfo.openid}')`), 'isDislike'],
+        // 查询点赞数量 LIKE+题目
+        [literal(`(select count(status) from LikeStatus where status = '${LIKE}' and topic_id = '${topicId}')`), 'likeCount'],
+        // 查询点踩数量 DISLIKE+题目
+        [literal(`(select count(status) from LikeStatus where status = '${DISLIKE}' and topic_id = '${topicId}')`), 'dislikeCount'],
+        // 查询是否点赞 LIKE+用户+题目
+        [
+          literal(`(
+            select status from LikeStatus where status = '${LIKE}' and user_id = '${openid}' and topic_id = '${topicId}'
+          )`), 
+          'isLike'
+        ],
+        // 查询是否点踩 DISLIKE+用户+题目
+        [
+          literal(`(
+            select status from LikeStatus where status = '${DISLIKE}' and user_id = '${openid}' and topic_id = '${topicId}'
+          )`), 
+          'isDislike'
+        ],
       ],
       where: {
         id: topicId,
@@ -144,7 +158,7 @@ class TopicService extends Service {
 
     const attributes = ['id', 'categoryId', 'topic'];
     if (isDetail == 1) {
-      attributes.push('level', 'type', 'answer', 'online', 'status', 'options', 'correct', 'createdTime', 'updatedTime', 'desc');
+      attributes.push('level', 'type', 'answer', 'topicDesc', 'online', 'status', 'options', 'correct', 'createdTime', 'updatedTime', 'desc');
     }
 
     const result = await ctx.model.Topic.findAndCountAll({

@@ -21,7 +21,7 @@ class UploadFilesController extends Controller {
         throw new BadRequestException('上传失败');
       }
     } catch (error) {
-      throw new BadRequestException('文件不存在');
+      throw new BadRequestException('服务异常', error);
     }
   }
 

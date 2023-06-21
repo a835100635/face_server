@@ -6,7 +6,7 @@ const category = require('./category');
 
 module.exports = app => {
   const { STRING, INTEGER, DATE, NOW, UUIDV4, DataTypes } = app.Sequelize;
-  const topic = app.model.define('Topic', {
+  const Topic = app.model.define('Topic', {
     // 题目id
     id: {
       type: DataTypes.UUID,
@@ -19,6 +19,8 @@ module.exports = app => {
     categoryId: INTEGER,
     // 题目
     topic: STRING,
+    // 题目描述
+    topicDesc: DataTypes.TEXT,
     // 等级 1、2、3、4、5
     level: {
       type: INTEGER,
@@ -26,8 +28,8 @@ module.exports = app => {
     },
     // 题目类型 1-选择、2-填空、3-判断，4-开放
     type: INTEGER,
-    // 答案 填空 判断
-    answer: STRING,
+    // 答案 填空 判断 设置超长，防止超出
+    answer: DataTypes.TEXT,
     // 选项 选择 "{A:'',B:'',c:''}"
     options: STRING,
     // 正确选项 A
@@ -66,8 +68,8 @@ module.exports = app => {
   });
   // egg-sequelize 插件在loadDatabase的时候会执行associate()，建立模型之间的关系
   // 一个题目可以有多个点赞
-  topic.options.modelDependencies = [ category ];
-  topic.associate = () => {
+  Topic.options.modelDependencies = [ category ];
+  Topic.associate = () => {
     // 一个题目只能属于一个分类
     app.model.Category.hasMany(app.model.Topic,
       { foreignKey: 'categoryId', sourceKey: 'id' }
@@ -76,7 +78,7 @@ module.exports = app => {
       { foreignKey: 'categoryId', targetKey: 'id' }
     );
   };
-  return topic;
+  return Topic;
 };
 
 

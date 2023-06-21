@@ -12,7 +12,7 @@ class ResourceController extends Controller {
   async add() {
     const { ctx } = this;
     const body = ctx.request.body;
-    body.userId = ctx.state.userInfo.openId;
+    body.userId = ctx.state.userInfo.openid;
     verifyData(body, ctx);
     // 默认为不通过
     body.status = 0;
@@ -51,7 +51,7 @@ class ResourceController extends Controller {
     const { ctx } = this;
     const body = ctx.request.body;
     const { id } = body;
-    body.userId = ctx.state.userInfo.openId;
+    body.userId = ctx.state.userInfo.openid;
     if(!id) {
       throw new BadRequestException('资源id必传');
     }

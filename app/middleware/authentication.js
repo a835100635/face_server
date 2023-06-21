@@ -10,7 +10,7 @@ module.exports = function AuthenticationMiddleware() {
     // 开发环境跳过
     if (NODE_ENV === 'development') {
       ctx.state.userInfo = {
-        openId: ADMIN_DEFAULT_OPENID,
+        openid: ADMIN_DEFAULT_OPENID,
       }
       await next();
       return;
