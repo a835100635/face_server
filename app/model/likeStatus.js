@@ -10,7 +10,7 @@ const { LIKE, DISLIKE } = LIKE_STATUS;
 
 module.exports = app => {
   const { STRING, INTEGER, ENUM, DataTypes } = app.Sequelize;
-  const likeStatus = app.model.define('LikeStatus', {
+  const LikeStatus = app.model.define('LikeStatus', {
     // 点赞id
     id: {
       type: INTEGER,
@@ -50,9 +50,9 @@ module.exports = app => {
     // timestamps默认值是true，如实是true会自动添加上 create_time 和update_time两个字段
     timestamps: false,
   });
-  likeStatus.options.modelDependencies = [ Topic ];
+  LikeStatus.options.modelDependencies = [ Topic ];
   // 关联关系
-  likeStatus.associate = () => {
+  LikeStatus.associate = () => {
     app.model.Topic.hasMany(app.model.LikeStatus, {
       foreignKey: 'topicId',
       sourceKey: 'id' }
@@ -62,5 +62,5 @@ module.exports = app => {
       targetKey: 'id' 
     });
   };
-  return likeStatus;
+  return LikeStatus;
 };
